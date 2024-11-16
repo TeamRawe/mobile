@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\GOCS_MAIN.props" />
+</Project>

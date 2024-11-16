@@ -1,0 +1,9 @@
+C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN.Shared\wwwroot\profile.svg
+C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN.Shared\wwwroot\bootstrap\bootstrap.min.css.map
+C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN.Shared\wwwroot\app.css
+C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN.Shared\wwwroot\bootstrap\bootstrap.min.css
+wwwroot\app.css
+wwwroot\bootstrap\bootstrap.min.css
+wwwroot\bootstrap\bootstrap.min.css.map
+wwwroot\favicon.png
+wwwroot\profile.svg
