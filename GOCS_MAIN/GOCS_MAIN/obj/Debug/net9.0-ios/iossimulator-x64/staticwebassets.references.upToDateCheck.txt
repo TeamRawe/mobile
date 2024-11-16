@@ -1,0 +1,1 @@
+C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN.Shared\obj\Debug\net9.0\staticwebassets.build.json
