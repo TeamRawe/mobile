@@ -1,0 +1,8 @@
+.FormBody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+    background-color: #5EB1BF;
+}
