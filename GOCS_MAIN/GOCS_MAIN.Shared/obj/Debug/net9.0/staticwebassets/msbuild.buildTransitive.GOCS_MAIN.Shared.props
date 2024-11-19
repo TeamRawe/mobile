@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\GOCS_MAIN.Shared.props" />
-</Project>
