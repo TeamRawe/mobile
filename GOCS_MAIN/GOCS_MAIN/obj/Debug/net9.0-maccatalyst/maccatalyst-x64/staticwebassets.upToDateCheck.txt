@@ -1,4 +1,0 @@
-C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN\wwwroot\index.html
-C:\Users\MeL\source\repos\GOCS_MAIN\GOCS_MAIN\GOCS_MAIN\wwwroot\app.css
-wwwroot\app.css
-wwwroot\index.html
