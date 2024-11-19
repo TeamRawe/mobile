@@ -1,0 +1,12 @@
+# Visual Studio related
+.vs/
+*.user
+*.suo
+
+# Build directories
+bin/
+obj/
+
+# Other system files
+*.cache
+*.log
