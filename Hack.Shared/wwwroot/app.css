@@ -1,13 +1,11 @@
-<<<<<<< HEAD:GOCS_MAIN/GOCS_MAIN.Shared/wwwroot/app.css
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    
-=======
+}
 * {
     box-sizing: border-box;
     margin: 0px;
     padding: 0px;
->>>>>>> 49dcab8b45cdbef4b90d31a82198bf72e1c870f8:Hack.Shared/wwwroot/app.css
 }
 
 #app {
