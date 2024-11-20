@@ -1,0 +1,96 @@
+﻿@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+
+<div class="screen-1">
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816 285" width="100px" height="100px" style="fill: hsl(233deg 36% 38%);">
+            <g clip-path="url(#clip0)">
+                <mask id="mask0" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="816" height="285">
+                    <path d="M816 0H0V285H816V0Z" fill="white"></path>
+                </mask>
+                <g mask="url(#mask0)">
+                    <path d="M0 270H816" stroke="hsl(233deg 36% 38%)" stroke-width="30"></path>
+                    <path d="M0.359375 4.00063H45.4394V131.68L138.96 4.00063H181.52V200H136.72V72.6006L43.1994 200H0.359375V4.00063ZM323.001 203.36C303.028 203.36 284.921 199.067 268.681 190.48C252.628 181.707 239.934 169.667 230.601 154.36C221.454 138.867 216.881 121.413 216.881 102C216.881 82.5876 221.454 65.2276 230.601 49.9206C239.934 34.4276 252.628 22.3876 268.681 13.8006C284.921 5.02763 303.121 0.640625 323.281 0.640625C340.268 0.640625 355.574 3.62764 369.201 9.60064C383.014 15.5736 394.588 24.1606 403.921 35.3606L374.801 62.2406C361.548 46.9336 345.121 39.2806 325.521 39.2806C313.388 39.2806 302.56 41.9876 293.04 47.4006C283.52 52.6276 276.054 60.0006 270.641 69.5206C265.414 79.0406 262.801 89.8676 262.801 102C262.801 114.133 265.414 124.96 270.641 134.48C276.054 144 283.52 151.467 293.04 156.88C302.56 162.107 313.388 164.72 325.521 164.72C345.121 164.72 361.548 156.973 374.801 141.48L403.921 168.36C394.588 179.747 383.014 188.427 369.201 194.4C355.388 200.373 339.988 203.36 323.001 203.36ZM569.284 97.8006C581.231 101.347 590.377 107.133 596.724 115.16C603.071 123.187 606.245 133.08 606.245 144.84C606.245 162.2 599.618 175.733 586.365 185.44C573.298 195.147 554.538 200 530.085 200H433.484V4.00063H524.765C547.538 4.00063 565.272 8.38763 577.965 17.1606C590.658 25.9336 597.005 38.4406 597.005 54.6806C597.005 64.3876 594.577 72.9736 589.724 80.4406C584.871 87.7206 578.057 93.5076 569.284 97.8006ZM478.565 85.2006H520.844C530.737 85.2006 538.205 83.2406 543.245 79.3206C548.285 75.2136 550.805 69.2406 550.805 61.4006C550.805 53.7476 548.192 47.8676 542.965 43.7606C537.925 39.6536 530.551 37.6006 520.844 37.6006H478.565V85.2006ZM528.405 166.4C549.685 166.4 560.325 158 560.325 141.2C560.325 124.96 549.685 116.84 528.405 116.84H478.565V166.4H528.405ZM734.799 203.36C714.819 203.36 696.719 199.067 680.479 190.48C664.419 181.707 651.73 169.667 642.4 154.36C633.25 138.867 628.677 121.413 628.677 102C628.677 82.5876 633.25 65.2276 642.4 49.9206C651.73 34.4276 664.419 22.3876 680.479 13.8006C696.719 5.02763 714.92 0.640625 735.08 0.640625C752.06 0.640625 767.37 3.62764 781 9.60064C794.81 15.5736 806.379 24.1606 815.719 35.3606L786.599 62.2406C773.339 46.9336 756.92 39.2806 737.32 39.2806C725.18 39.2806 714.36 41.9876 704.84 47.4006C695.32 52.6276 687.85 60.0006 682.44 69.5206C677.21 79.0406 674.599 89.8676 674.599 102C674.599 114.133 677.21 124.96 682.44 134.48C687.85 144 695.32 151.467 704.84 156.88C714.36 162.107 725.18 164.72 737.32 164.72C756.92 164.72 773.339 156.973 786.599 141.48L815.719 168.36C806.379 179.747 794.81 188.427 781 194.4C767.18 200.373 751.779 203.36 734.799 203.36Z" />
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    <div class="email">
+        <label for="email">Адрес электронной почты</label>
+        <div class="sec-2">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" name="email" placeholder="Username@gmail.com" @bind="Email" />
+        </div>
+    </div>
+
+    <div class="password">
+        <label for="password">Пароль</label>
+        <div class="sec-2">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input class="pas" type="password" name="password" placeholder="············" @bind="Password" />
+            <ion-icon class="show-hide" name="eye-outline"></ion-icon>
+        </div>
+    </div>
+
+    <button class="login" @onclick="Login">Войти</button>
+
+    @*<div class="footer">
+        <span @onclick="ForgotPassword">Забыли пароль?</span>
+    </div>*@
+</div>
+
+@code {
+    private string Email { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+
+    private async Task Login()
+    {
+        try
+        {
+            // Формируем данные для отправки
+            var loginData = new { Email, Password };
+            
+            // Отправляем данные на сервер
+            var response = await HttpClient.PostAsJsonAsync("api/login", loginData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Извлекаем куки из ответа
+                var cookies = response.Headers.GetValues("Set-Cookie");
+                await SaveCookies(cookies);
+
+                Console.WriteLine("Login successful!");
+            }
+            else
+            {
+                // Обработка ошибки
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Login failed: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Обработка исключений
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+    
+    private async Task SaveCookies(IEnumerable<string> cookies)
+    {
+        foreach (var cookie in cookies)
+        {
+            // Сохраняем куки через JS
+            await JSRuntime.InvokeVoidAsync("document.cookie", cookie);
+        }
+    }
+
+    private async Task<string> GetCookie(string name)
+    {
+        // Получение куки из браузера
+        var cookies = await JSRuntime.InvokeAsync<string>("document.cookie");
+        var cookieArray = cookies.Split(';').Select(c => c.Trim());
+        return cookieArray.FirstOrDefault(c => c.StartsWith($"{name}="))?.Split('=')[1] ?? string.Empty;
+    }
+}
