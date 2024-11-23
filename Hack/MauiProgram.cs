@@ -16,6 +16,8 @@ namespace Hack
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddSingleton<AuthService>();
+
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();

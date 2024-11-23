@@ -1,17 +1,22 @@
 ﻿@inherits LayoutComponentBase
-
+@inject AuthService AuthService
 
 <div class="page">
         <NavMenu />
 
-    <main>
-        
-        <article class="content">
-            @Body
-        </article>
-    </main>
+    <div class="content-wrapper">
+        <main>
+            <article class="content">
+                @Body
+            </article>
+        </main>
+
+    </div>
     
 </div>
+<footer>
+    <p>© 2024 Моя компания</p>
+</footer>
 
 
 @*<div id="blazor-error-ui" data-nosnippet>
@@ -21,3 +26,15 @@
 </div>
 *@
 
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Проверяем статус авторизации только при первом рендере компонента
+            await AuthService.CheckLoginStatus();
+        }
+    }
+
+}

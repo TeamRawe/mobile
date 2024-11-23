@@ -1,0 +1,12 @@
+
+
+* {
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.footer {
+    background: linear-gradient(90deg, #0E2559 0%, #0C4D66 50.4%, #0A7774 100%);
+    height: 100px;
+    width: 100%;
+}
+

@@ -16,12 +16,21 @@
     display: flex;
     align-items: center;
 }
+.brand-nav {
+    text-decoration: none;
+    color: inherit;
+}
+    .brand-nav:hover,
+    .brand-nav:focus {
+        text-decoration: none;
+        color: inherit; 
+    }
 
 .navbar-brand {
     font-size: 70px;
     font-weight: 700;
     color: #061C42;
-    margin-left: 20px;
+    margin-left: 51px;
     text-decoration: none;
     letter-spacing: 0;
     width: 234px;
@@ -44,14 +53,7 @@
     padding: 0;
 }
 
-.nav-item {
-    margin-left: 15px;
-    display: flex;
-}
 
-    .nav-item.profile {
-        margin-left: auto;
-    }
 
 .profile-img {
     width: 40px;
@@ -78,18 +80,126 @@
 .navmenu {
     display: flex;
     margin-top: 120px; 
-    height: calc(100vh - 120px); 
+    height: 600px;
 }
 
 /* Sidebar */
 .nav-scrollable {
-    width: 250px;
-    background-color: #E5EEF6;
-    border-right: 1px solid #ddd;
-    flex-shrink: 0;
-    border-radius: 40px;
-    margin-left: 10px;
+    width: 300px;
+    background-color: #FFFFFF;
+    height: 600px;
+    margin-left: 51px;
+    z-index: 1;
 }
+
+
+
+.nav-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 3px;
+}
+
+.nav-item {
+    position: relative;
+    display: inline-block;
+    border-radius: 150px;
+    background: white; 
+    padding: 10px 20px;
+    z-index: 1;
+    transition: all 0.3s ease; 
+}
+
+    /* Псевдоэлемент для градиентной рамки */
+    .nav-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 150px;
+        padding: 2px; /* Толщина градиента */
+        background: linear-gradient(90deg, #0E2559 0%, #1E4FBF 100%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        z-index: -1;
+    }
+    .nav-item:hover {
+        background-color: rgb(229, 238, 246); /* Цвет фона при наведении */
+    }
+        .nav-item:hover .nav-text {
+            color: #0ABAB5;
+        }
+        .nav-item:hover .project-icon {
+            background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 47 47%22 fill%3D%22none%22%3E%3Cpath d%3D%22M31.6365 15.3614C42.6249 26.3498 47.885 38.898 43.3893 43.3937C38.8984 47.887 26.3454 42.6245 15.3594 31.6385C4.37342 20.6526 -0.889057 8.10193 3.60662 3.60625C8.09752 -0.887035 20.6482 4.37544 31.6365 15.3614Z%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M22.9007 23.5H24.0951M15.3618 15.3614C4.37338 26.3498 -0.889091 38.8981 3.60659 43.3937C8.10226 47.8894 20.6505 42.6245 31.6365 31.6386C42.6225 20.6526 47.8873 8.10195 43.3917 3.60627C38.896 -0.889411 26.3477 4.37545 15.3618 15.3614Z%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+            background-size: contain;
+        }
+        .nav-item:hover .documents-icon {
+            background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 43 54%22 fill%3D%22none%22%3E%3Cpath d%3D%22M2.00242 49.9167C2.00242 51.0667 2.93576 52 4.08576 52H33.6746C36.9052 52 38.1135 50.9861 38.1135 47.5556V43.5417M2.00242 49.9167C2.00242 48.2591 2.6609 46.6694 3.83301 45.4972C5.00511 44.3251 6.59482 43.6667 8.25242 43.6667H36.4524C37.0802 43.6667 37.6339 43.625 38.1135 43.5417M2.00242 49.9167V10.8889C2.00242 7.73333 1.80242 4.25278 5.03576 2.60556C6.22465 2 7.7802 2 10.8913 2H36.4469C39.8802 2 40.8913 3.21389 40.8913 6.44444V39.2222C40.8913 41.9861 40.108 43.1806 38.1135 43.5417%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M14.7802 22.3418L18.6108 26.7169C18.6934 26.8097 18.7957 26.8829 18.9102 26.931C19.0247 26.9792 19.1486 27.0012 19.2727 26.9953C19.3968 26.9894 19.518 26.9559 19.6274 26.8972C19.7369 26.8384 19.8318 26.756 19.9053 26.6558L27.6833 15.8889%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+        }
+
+@media (max-width: 1024px) {
+    .navbar-brand {
+        font-size: 50px;
+        margin-left: 20px;
+        width: auto;
+    }
+
+    .navbar-profile {
+        margin-right: 20px;
+    }
+
+    .navmenu {
+        flex-direction: column;
+        margin-top: 150px;
+        height: auto;
+    }
+
+    .nav-scrollable {
+        width: 100%;
+        height: auto;
+        margin-left: 0;
+    }
+
+    .nav-item {
+        padding: 8px 16px;
+    }
+}
+@media (max-width: 768px) {
+    .navbar {
+        height: 80px;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .navbar-profile {
+        margin-top: 10px;
+    }
+
+    .navmenu {
+        margin-top: 0;
+        flex-direction: column;
+    }
+
+    .nav-item {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .navbar-brand {
+        font-size: 40px;
+    }
+
+    .navmenu .nav-scrollable {
+        display: none;
+    }
+    .navmenu .navbar .profile-name {
+        display: none;
+    }
+}
+
 
 /* Основной контент */
 body {
@@ -112,28 +222,131 @@ body {
 .menu-title {
     font-size: 35px;
     font-weight: 500;
-    color: #061C42;
-    padding-top: 10px;
-    text-align: center;
+    color: #FFFFFF;
+    background: #0FBBB6;
+    border-radius: 15px;
+    height: 55px;
+    width: 241px;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     margin: 0;
 }
 
 /* Разделительная линия */
 .menu-divider {
     border: none;
-    border-top: 6px solid #fff; 
-    margin: 10px -20px; 
-}
-
-
-.hr {
+    border-top: 20px solid #fff;
+    margin: 0;
     opacity: 1;
 }
+
+.nav-text {
+    font-size: 20px;
+    font-weight: 400;
+    color: #061C42;
+}
+
+.project-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 47 47%22 fill%3D%22none%22%3E%3Cpath d%3D%22M31.6365 15.3614C42.6249 26.3498 47.885 38.898 43.3893 43.3937C38.8984 47.887 26.3454 42.6245 15.3594 31.6385C4.37342 20.6526 -0.889057 8.10193 3.60662 3.60625C8.09752 -0.887035 20.6482 4.37544 31.6365 15.3614Z%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M22.9007 23.5H24.0951M15.3618 15.3614C4.37338 26.3498 -0.889091 38.8981 3.60659 43.3937C8.10226 47.8894 20.6505 42.6245 31.6365 31.6386C42.6225 20.6526 47.8873 8.10195 43.3917 3.60627C38.896 -0.889411 26.3477 4.37545 15.3618 15.3614Z%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+    transition: background 0.3s ease; 
+}
+
+
+.documents-icon {
+    display: inline-block; 
+    width: 23px; 
+    height: 23px; 
+    background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 43 54%22 fill%3D%22none%22%3E%3Cpath d%3D%22M2.00242 49.9167C2.00242 51.0667 2.93576 52 4.08576 52H33.6746C36.9052 52 38.1135 50.9861 38.1135 47.5556V43.5417M2.00242 49.9167C2.00242 48.2591 2.6609 46.6694 3.83301 45.4972C5.00511 44.3251 6.59482 43.6667 8.25242 43.6667H36.4524C37.0802 43.6667 37.6339 43.625 38.1135 43.5417M2.00242 49.9167V10.8889C2.00242 7.73333 1.80242 4.25278 5.03576 2.60556C6.22465 2 7.7802 2 10.8913 2H36.4469C39.8802 2 40.8913 3.21389 40.8913 6.44444V39.2222C40.8913 41.9861 40.108 43.1806 38.1135 43.5417%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M14.7802 22.3418L18.6108 26.7169C18.6934 26.8097 18.7957 26.8829 18.9102 26.931C19.0247 26.9792 19.1486 27.0012 19.2727 26.9953C19.3968 26.9894 19.518 26.9559 19.6274 26.8972C19.7369 26.8384 19.8318 26.756 19.9053 26.6558L27.6833 15.8889%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain; 
+    vertical-align: middle; 
+}
+
+.report-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg width%3D%2241%22 height%3D%2254%22 viewBox%3D%220 0 41 54%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M14.273 2H8.16667C6.53117 2 4.96265 2.65848 3.80618 3.83058C2.6497 5.00268 2 6.5924 2 8.25V45.75C2 47.4076 2.6497 48.9973 3.80618 50.1694C4.96265 51.3415 6.53117 52 8.16667 52H32.8333C34.4688 52 36.0374 51.3415 37.1938 50.1694C38.3503 48.9973 39 47.4076 39 45.75V27M14.273 2C17.6798 2 20.5 4.79722 20.5 8.25V14.5C20.5 16.1576 21.1497 17.7473 22.3062 18.9194C23.4626 20.0915 25.0312 20.75 26.6667 20.75H32.8333C34.4688 20.75 36.0374 21.4085 37.1938 22.5806C38.3503 23.7527 39 25.3424 39 27M14.273 2C24.3864 2 39 16.8889 39 27M12.963 39.5H29.4074M12.963 31.1667H23.9259%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+}
+
+.help-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg width%3D%2249%22 height%3D%2249%22 viewBox%3D%220 0 49 49%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M47 24.5C47 27.4547 46.418 30.3806 45.2873 33.1104C44.1566 35.8402 42.4992 38.3206 40.4099 40.4099C38.3206 42.4992 35.8402 44.1566 33.1104 45.2873C30.3806 46.418 27.4547 47 24.5 47C21.5453 47 18.6194 46.418 15.8896 45.2873C13.1598 44.1566 10.6794 42.4992 8.5901 40.4099C6.50078 38.3206 4.84344 35.8402 3.71271 33.1104C2.58198 30.3806 2 27.4547 2 24.5C2 18.5326 4.37053 12.8097 8.5901 8.5901C12.8097 4.37053 18.5326 2 24.5 2C30.4674 2 36.1903 4.37053 40.4099 8.5901C44.6295 12.8097 47 18.5326 47 24.5Z%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M24.5001 28.24C24.5001 23.2325 29.5001 24.4825 29.5001 19.475C29.5001 12.8275 19.5001 12.8275 19.5001 19.475M24.5001 34.4925V33.2425%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+}
+
+
+/*Модальное окно*/
+
+/* Стили для профиля и иконки */
+.navbar-profile {
+    position: relative; /* Для позиционирования выпадающего окна относительно иконки */
+}
+
+.profile-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Стили для выпадающего окна */
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.profile-dropdown-content {
+    padding: 10px;
+}
+
+    .profile-dropdown-content p {
+        margin: 5px 0;
+    }
+
+#icon-button {
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.Logout-button {
+    font-size: 16px;
+    background-color: #0E2559;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 400;
+    width: 100%;
+    align-items: center;
+}
+
+
+
 
 
 /*Анимация*/
 
-.nav-item {
+/*.nav-item {
     position: relative;
     height: 54px;
     font-size: 22px;
@@ -144,7 +357,7 @@ body {
 
 .nav-text {
     position: relative;
-    z-index: 1; /* Текст выше подсветки */
+    z-index: 1; 
     display: flex;
     align-items: center;
 }
@@ -152,36 +365,36 @@ body {
 .nav-link {
     display: flex;
     align-items: center;
-    color: black; /* Цвет текста по умолчанию */
+    color: black; 
     text-decoration: none;
     transition: color 0.3s;
     position: relative;
 }
 
 .nav-item:hover .nav-text {
-    color: #0ABAB5; /* Зеленый цвет текста при наведении */
+    color: #0ABAB5; 
 }
 
 .nav-item:hover #nav-content-highlight {
-    top: 8px; /* Подсветка появляется чуть ниже */
-    opacity: 1; /* Подсветка появляется */
-    left: -10px; /* Подсветка выдвигается влево */
-    width: calc(100% + 30px); /* Увеличение ширины подсветки */
+    top: 8px; 
+    opacity: 1; 
+    left: -10px; 
+    width: calc(100% + 30px);
 }
 
 .nav-item #nav-content-highlight {
     position: absolute;
-    left: -10px; /* Смещаем влево на 10px */
-    top: 10px; /* Подсветка появляется чуть ниже */
-    width: calc(100% + 30px); /* Увеличиваем ширину подсветки */
-    height: calc(70px - 20px); /* Уменьшаем высоту подсветки */
-    background: #fff; /* Белый фон подсветки */
-    border-radius: 30px 0 0 30px; /* Закругление только с левой стороны */
-    transition: top 0.4s ease-in-out, opacity 0.3s ease-out, left 0.4s ease-in-out, width 0.4s ease-in-out; /* Плавные переходы */
-    opacity: 0; /* Элемент скрыт по умолчанию */
-    pointer-events: none; /* Подсветка не мешает кликам по ссылке */
-    z-index: 0; /* Подсветка должна быть под текстом */
-}
+    left: -10px; 
+    top: 10px; 
+    width: calc(100% + 30px); 
+    height: calc(70px - 20px); 
+    background: #fff; 
+    border-radius: 30px 0 0 30px; 
+    transition: top 0.4s ease-in-out, opacity 0.3s ease-out, left 0.4s ease-in-out, width 0.4s ease-in-out;*/ /* Плавные переходы */
+    /*opacity: 0; 
+    pointer-events: none;
+    z-index: 0;
+}*/
 
 
 

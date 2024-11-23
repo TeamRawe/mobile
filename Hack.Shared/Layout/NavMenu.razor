@@ -1,20 +1,26 @@
-﻿
+﻿@inject NavigationManager Navigation
+@inject AuthService AuthService
+@inject IJSRuntime JSRuntime
+
+@using Hack.Shared.Pages
+
+
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 
 <div class="navmenu">
    
-
     <!-- Navbar -->
     <header class="navbar">
-        <span class="navbar-brand">ИСВС</span>
+        <a class="brand-nav" href="/">
+            <span class="navbar-brand">ИСВС</span>
+        </a>
         <div class="navbar-profile">
             <span class="profile-name">Баженов Владимир Дмитриевич</span>
-            <a href="/profile" class="profile-link">
+            <button id="icon-button" class="profile-link" @onclick="ToggleProfileDropdown">
                 <svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <title>profile_round [#1342]</title>
-                    <desc>Created with Sketch.</desc>
+                    <title>profile_round</title>
                     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#061C42">
                             <g id="icons" transform="translate(56.000000, 160.000000)">
@@ -23,53 +29,92 @@
                         </g>
                     </g>
                 </svg>
-            </a>
+            </button>
+
+            @if (showDropdown)
+            {
+                <div class="profile-dropdown" @onclick="CloseDropdown">
+                    <div class="profile-dropdown-content" @onclick:stopPropagation>
+                        <p><strong>Фамилия:</strong> @LastName</p>
+                        <p><strong>Имя:</strong> @FirstName</p>
+                        <p><strong>Отчество:</strong> @MiddleName</p>
+                        <p><strong>Должность:</strong> @Position</p>
+                        <button class="Logout-button" @onclick="OnLogoutClicked">Выйти</button>
+                    </div>
+                </div>
+            }
         </div>
     </header>
+
+    
+   
+
+
 
     <!-- Sidebar -->
     <div class="nav-scrollable">
         <h3 class="menu-title">МЕНЮ</h3>
         <hr class="menu-divider" />
-        <nav class="flex-column">
+        <nav class="nav-container">
             <div class="nav-item">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
                     <span class="nav-text">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Проекты
+                        <span class="project-icon" aria-hidden="true"></span> Проекты
                     </span>
                 </NavLink>
             </div>
 
             <div class="nav-item">
                 <NavLink class="nav-link" href="counter">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
-                    <span class="nav-text">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Договоры
-                    </span>
+                    <span class="documents-icon" aria-hidden="true"></span>
+                    <span class="nav-text">Договоры</span>
                 </NavLink>
             </div>
 
             <div class="nav-item">
                 <NavLink class="nav-link" href="weather">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
-                    <span class="nav-text">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Отчеты
-                    </span>
+                    <span class="report-icon" aria-hidden="true"></span>
+                    <span class="nav-text">Отчеты</span>
                 </NavLink>
             </div>
 
             <div class="nav-item">
                 <NavLink class="nav-link" href="weather">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
                     <span class="nav-text">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Помощь
+                        <span class="help-icon" aria-hidden="true"></span> Помощь
                     </span>
                 </NavLink>
             </div>
+            
 
         </nav>
 
     </div>
 
 </div>
+
+@code {
+
+    private bool showDropdown = false;
+    private string LastName = "Баженов";
+    private string FirstName = "Владимир";
+    private string MiddleName = "Дмитриевич";
+    private string Position = "Менеджер";
+
+    // Функция для переключения состояния окна (открытие/закрытие)
+    private void ToggleProfileDropdown()
+    {
+        showDropdown = !showDropdown;
+    }
+
+    // Закрытие выпадающего окна при клике вне окна
+    private void CloseDropdown(MouseEventArgs e)
+    {
+        showDropdown = false;
+    }
+
+    private async Task OnLogoutClicked()
+    {
+        await AuthService.Logout();
+    }
+}

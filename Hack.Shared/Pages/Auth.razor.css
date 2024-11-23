@@ -1,7 +1,26 @@
 
-* {
-    font-family: 'Poppins', sans-serif;
+.FormBody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: hsl(213deg 85% 97%);
+    width: 100%;
+    height: 100%;
+    padding: 2em;
+    position: relative;
 }
+
+    .FormBody::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.05);
+        z-index: 0;
+    }
+
 
 body {
     user-select: none;
@@ -42,7 +61,6 @@ input::placeholder {
 
     .screen-1 .logo {
         margin-top: -3em;
-
     }
 
     .screen-1 .email,
@@ -105,3 +123,6 @@ input::placeholder {
 button {
     cursor: pointer;
 }
+
+
+
