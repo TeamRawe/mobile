@@ -1,0 +1,64 @@
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager Navigation
+
+<header class="container">
+	<div class="border-half">
+		<button class="back-button" @onclick="GoBack">Назад</button>
+		<span class="current-path">
+			@BreadcrumbPath
+		</span>
+	</div>
+</header>
+
+
+@code {
+    private string BreadcrumbPath;
+    private string? PreviousUrl;
+
+    private bool IsBackButtonDisabled => string.IsNullOrEmpty(PreviousUrl);
+
+    private void GoBack()
+    {
+        if (!string.IsNullOrEmpty(PreviousUrl))
+        {
+            Navigation.NavigateTo(PreviousUrl);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += HandleLocationChanged;
+        UpdateBreadcrumbPath();
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        UpdateBreadcrumbPath();
+        StateHasChanged();
+    }
+
+    private void UpdateBreadcrumbPath()
+    {
+        var currentUri = Navigation.Uri;
+        var baseUri = Navigation.BaseUri;
+
+        var relativePath = currentUri.Replace(baseUri, string.Empty).Trim('/');
+        BreadcrumbPath = string.Join(" > ", relativePath.Split('/'));
+
+        var segments = relativePath.Split('/').ToList();
+        if (segments.Count > 1)
+        {
+            segments.RemoveAt(segments.Count - 1);
+            PreviousUrl = baseUri + string.Join("/", segments);
+        }
+        else
+        {
+            PreviousUrl = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= HandleLocationChanged;
+    }
+}

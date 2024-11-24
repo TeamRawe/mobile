@@ -2,11 +2,12 @@
 
 * {
     font-family: 'Montserrat', Arial, sans-serif;
+    
 }
 
 
 .navbar {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -236,7 +237,7 @@ body {
 /* Разделительная линия */
 .menu-divider {
     border: none;
-    border-top: 20px solid #fff;
+    border-top: 30px solid #fff;
     margin: 0;
     opacity: 1;
 }
@@ -307,7 +308,7 @@ body {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    width: 200px;
+    width: 250px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 }

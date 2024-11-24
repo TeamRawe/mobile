@@ -2,21 +2,24 @@
 @inject AuthService AuthService
 
 <div class="page">
-        <NavMenu />
-
     <div class="content-wrapper">
+        <NavMenu />
+    <div class="main-page">
+        <MainHeader />
         <main>
             <article class="content">
                 @Body
             </article>
         </main>
-
     </div>
-    
+    </div>
+    <footer>
+        <span class="company-name">ИСВС 2024</span>
+        
+    </footer>
 </div>
-<footer>
-    <p>© 2024 Моя компания</p>
-</footer>
+
+
 
 
 @*<div id="blazor-error-ui" data-nosnippet>

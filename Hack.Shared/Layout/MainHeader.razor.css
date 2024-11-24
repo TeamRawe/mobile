@@ -1,0 +1,57 @@
+.container {
+    background-color: white; /* Белый фон для контейнера */
+    padding: 20px 20px 10px 20px; /* Отступы внутри контейнера */
+    margin-left: -59px;
+    z-index: 2;
+}
+
+.border-half {
+    position: relative;
+    padding: 10px; /* Отступы внутри рамки */
+    margin-left: 10px; /* Отступ от внешнего контейнера */
+    margin-bottom: 10px;
+}
+
+    .border-half::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-left: 4px solid transparent; /* Создаем левую рамку */
+        border-bottom: 4px solid transparent; /* Создаем нижнюю рамку */
+        border-image: linear-gradient(to bottom left, #0E2559, #0C4D66, #0A7774); /* Градиент для рамки */
+        border-image-slice: 1; /* Указывает, что градиент должен охватывать рамку полностью */
+        border-top: none; /* Отключаем рамку сверху */
+        border-right: none; /* Отключаем рамку справа */
+        border-radius: 10px; /* Закругленные углы */
+        pointer-events: none; /* Рамка не будет мешать взаимодействию с контентом */
+    }
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.back-button {
+    background-color: #0ABAB5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+    .back-button:hover {
+        background-color: #089f94;
+    }
+
+.current-path {
+    font-size: 26px;
+    color: #333;
+    font-weight: 500;
+}
