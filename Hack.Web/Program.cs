@@ -6,13 +6,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5087/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8000/") });
 
 builder.Services.AddHttpClient<AuthService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5087/");
+    client.BaseAddress = new Uri("http://127.0.0.1:8000/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    UseCookies = true
 });
+
 
 builder.Services.AddScoped<AuthService>();
 

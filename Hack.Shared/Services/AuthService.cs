@@ -1,78 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Text;
 
-
-public class AuthService
-{
-    private readonly NavigationManager _navigationManager;
-    private readonly IJSRuntime _jsRuntime;
-
-    public string ErrorMessage { get; private set; }
-    public bool IsLoggedIn { get; private set; } = false;
-
-    private readonly Dictionary<string, string> _testUsers = new()
-    {
-        { "test@example.com", "password123" },
-        { "admin@example.com", "adminpass" }
-    };
-
-    public AuthService(NavigationManager navigationManager, IJSRuntime jsRuntime)
-    {
-        _navigationManager = navigationManager;
-        _jsRuntime = jsRuntime;
-    }
-
-    public async Task<bool> Login(string email, string password)
-    {
-        if (_testUsers.TryGetValue(email, out var storedPassword) && storedPassword == password)
-        {
-            IsLoggedIn = true;
-
-            // Сохраняем состояние входа в localStorage
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "isLoggedIn", "true");
-
-            return true;
-        }
-        else
-        {
-            ErrorMessage = "Неверный email или пароль.";
-            return false;
-        }
-    }
-
-    public async Task Logout()
-    {
-        IsLoggedIn = false;
-
-        // Удаляем состояние входа из localStorage
-        await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "isLoggedIn");
-
-        _navigationManager.NavigateTo("/auth");
-    }
-
-    public async Task CheckLoginStatus()
-    {
-        // Проверяем состояние входа из localStorage
-        var isLoggedIn = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "isLoggedIn");
-        IsLoggedIn = isLoggedIn == "true";
-
-        if (!IsLoggedIn)
-        {
-            // Если пользователь не авторизован, перенаправляем на страницу авторизации
-            _navigationManager.NavigateTo("/auth");
-        }
-    }
-}
-
-
-
-
-
-
-/*
 public class AuthService
 {
     private readonly HttpClient _httpClient;
@@ -80,6 +10,7 @@ public class AuthService
     private readonly NavigationManager _navigationManager;
 
     public string ErrorMessage { get; private set; }
+    public bool IsAuthenticated { get; private set; } = false; // Новый параметр для проверки авторизации
 
     public AuthService(HttpClient httpClient, IJSRuntime jsRuntime, NavigationManager navigationManager)
     {
@@ -88,60 +19,45 @@ public class AuthService
         _navigationManager = navigationManager;
     }
 
-    private async Task<string> GetCsrfTokenFromCookieAsync()
+    public async Task InitializeCsrfTokenAsync()
     {
         try
         {
-            var cookie = await _jsRuntime.InvokeAsync<string>("eval", "document.cookie");
-            var csrfToken = cookie.Split(';')
-                                   .FirstOrDefault(c => c.Trim().StartsWith("csrftoken="))?
-                                   .Split('=')[1];
-            return csrfToken;
-        }
-        catch
-        {
-            ErrorMessage = "Ошибка при извлечении CSRF токена.";
-            return null;
-        }
-    }
-
-    public async Task<bool> GetCsrfToken()
-    {
-        try
-        {
-            // Отправляем GET запрос для получения CSRF токена
-            var response = await _httpClient.GetAsync("https://localhost:5087/api/auth/csrf-token");
+            var response = await _httpClient.GetAsync("http://127.0.0.1:8000/u/api/test/");
 
             if (response.IsSuccessStatusCode)
             {
-                // Получаем CSRF токен из cookies
-                var csrfToken = await GetCsrfTokenFromCookieAsync();
-                if (csrfToken != null)
+                var cookieHeader = response.Headers.GetValues("Set-Cookie").FirstOrDefault();
+                if (cookieHeader != null && cookieHeader.Contains("csrftoken="))
                 {
-                    // Добавляем CSRF токен в заголовки для последующих запросов
-                    _httpClient.DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrfToken);
-                    return true;
+                    var token = cookieHeader.Split(';')
+                        .FirstOrDefault(c => c.StartsWith("csrftoken="))?.Split('=')[1];
+
+                    if (token != null)
+                    {
+                        await _jsRuntime.InvokeVoidAsync("eval", $"document.cookie = 'csrftoken={token}; path=/; SameSite=None; Secure'");
+                    }
+                    else
+                    {
+                        ErrorMessage = "CSRF токен не найден в cookies.";
+                    }
                 }
                 else
                 {
-                    ErrorMessage = "CSRF токен не найден.";
-                    return false;
+                    ErrorMessage = "CSRF токен не найден в Set-Cookie заголовке.";
                 }
             }
             else
             {
-                ErrorMessage = "Ошибка при получении CSRF токена: " + response.ReasonPhrase;
-                return false;
+                ErrorMessage = $"Ошибка при получении CSRF токена: {response.ReasonPhrase}";
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = "Ошибка соединения: " + ex.Message;
-            return false;
+            ErrorMessage = $"Ошибка соединения: {ex.Message}";
         }
     }
 
-    // Метод для логина
     public async Task<bool> Login(string email, string password)
     {
         var loginModel = new
@@ -152,28 +68,47 @@ public class AuthService
 
         var content = new StringContent(JsonConvert.SerializeObject(loginModel), Encoding.UTF8, "application/json");
 
-        // Логирование тела запроса
-        Debug.WriteLine("Request Content: " + await content.ReadAsStringAsync());
-
         try
         {
-            // Сначала получаем CSRF токен, если не получен
-            var csrfTokenObtained = await GetCsrfToken();
-            if (!csrfTokenObtained)
-            {
-                return false;
-            }
-
-            // Теперь делаем запрос на сервер для авторизации
-            var response = await _httpClient.PostAsync("https://localhost:5087/api/auth/login", content);
+            var response = await _httpClient.PostAsync("http://127.0.0.1:8000/u/api/login/", content);
 
             if (response.IsSuccessStatusCode)
             {
+                // Извлекаем cookies с csrf токеном и sessionid
+                var cookies = response.Headers.GetValues("Set-Cookie").ToList();
+                string csrfToken = cookies.FirstOrDefault(c => c.StartsWith("csrftoken="))?.Split('=')[1];
+                string sessionId = cookies.FirstOrDefault(c => c.StartsWith("sessionid="))?.Split('=')[1];
+
+                // Если CSRF токен найден, сохраняем его
+                if (!string.IsNullOrEmpty(csrfToken))
+                {
+                    // Добавляем CSRF токен в заголовки для всех последующих запросов
+                    _httpClient.DefaultRequestHeaders.Add("X-CSRFToken", csrfToken);
+                    // Сохраняем CSRF токен в cookie для использования на клиенте
+                    await _jsRuntime.InvokeVoidAsync("eval", $"document.cookie = 'csrftoken={csrfToken}; path=/; SameSite=None; Secure'");
+                }
+                else
+                {
+                    ErrorMessage = "CSRF токен не найден в куки.";
+                }
+
+                // Если sessionId найден, сохраняем его
+                if (!string.IsNullOrEmpty(sessionId))
+                {
+                    // Сохраняем sessionid в cookie для использования на клиенте
+                    await _jsRuntime.InvokeVoidAsync("eval", $"document.cookie = 'sessionid={sessionId}; path=/; SameSite=None; Secure'");
+
+                    IsAuthenticated = true; // Устанавливаем статус авторизации
+                }
+                else
+                {
+                    ErrorMessage = "Session ID не найден в куки.";
+                }
+
                 return true;
             }
             else
             {
-                // Обработка ошибок
                 ErrorMessage = "Ошибка авторизации: " + response.ReasonPhrase;
                 return false;
             }
@@ -184,24 +119,61 @@ public class AuthService
             return false;
         }
     }
-  
+    public async Task SetAuthHeadersAsync()
+    {
+        try
+        {
+            var csrfToken = await GetCsrfTokenFromCookieAsync();
 
-    // Метод для logout
+            // Устанавливаем CSRF токен, если он есть
+            if (!string.IsNullOrEmpty(csrfToken))
+            {
+                _httpClient.DefaultRequestHeaders.Remove("X-CSRFToken");
+                _httpClient.DefaultRequestHeaders.Add("X-CSRFToken", csrfToken);
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка при установке заголовков авторизации: {ex.Message}";
+        }
+    }
+
+
+
     public async Task Logout()
     {
         try
         {
-            // Отправляем запрос на сервер для выхода
-            var response = await _httpClient.PostAsync("https://localhost:5087/api/auth/logout", null);
+            // Получаем CSRF токен из cookies
+            var csrfToken = await GetCsrfTokenFromCookieAsync();
+
+            if (string.IsNullOrEmpty(csrfToken))
+            {
+                ErrorMessage = "CSRF токен не найден.";
+                return;
+            }
+
+            // Создаем запрос на логаут с CSRF токеном
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://127.0.0.1:8000/u/api/logout/");
+            request.Headers.Add("X-CSRFToken", csrfToken); // Добавляем CSRF токен в заголовки запроса
+
+            var response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
-                // Перенаправляем на страницу авторизации после выхода
+                // Удаляем cookies для sessionid и csrftoken
+                await _jsRuntime.InvokeVoidAsync("eval", "document.cookie = 'sessionid=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure'");
+                await _jsRuntime.InvokeVoidAsync("eval", "document.cookie = 'csrftoken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure'");
+
+                // Перенаправляем пользователя на страницу логина
                 _navigationManager.NavigateTo("/auth");
+
+                // Обновляем статус авторизации
+                IsAuthenticated = false;
             }
             else
             {
-                ErrorMessage = "Ошибка при выходе: " + response.ReasonPhrase;
+                ErrorMessage = $"Ошибка при выходе: {response.StatusCode} {response.ReasonPhrase}";
             }
         }
         catch (Exception ex)
@@ -209,5 +181,48 @@ public class AuthService
             ErrorMessage = "Ошибка соединения: " + ex.Message;
         }
     }
+
+
+    private async Task<string> GetCsrfTokenFromCookieAsync()
+    {
+        try
+        {
+            var cookie = await _jsRuntime.InvokeAsync<string>("eval", "document.cookie");
+            var csrfToken = cookie.Split(';')
+                                  .Select(c => c.Trim())
+                                  .FirstOrDefault(c => c.StartsWith("csrftoken="))?
+                                  .Split('=')[1];
+
+            return csrfToken;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка при извлечении CSRF токена: {ex.Message}";
+            return null;
+        }
+    }
+
+    public async Task<bool> IsAuthenticatedAsync()
+    {
+        var sessionId = await GetCookieValue("sessionid");
+        return !string.IsNullOrEmpty(sessionId);
+    }
+
+    private async Task<string> GetCookieValue(string cookieName)
+    {
+        try
+        {
+            var cookie = await _jsRuntime.InvokeAsync<string>("eval", "document.cookie");
+            var value = cookie.Split(';')
+                              .Select(c => c.Trim())
+                              .FirstOrDefault(c => c.StartsWith($"{cookieName}="))?
+                              .Split('=')[1];
+            return value ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка при извлечении куки {cookieName}: {ex.Message}";
+            return string.Empty;
+        }
+    }
 }
-*/

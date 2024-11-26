@@ -23,12 +23,7 @@
                 </g>
             </svg>
         </div>
-        @if (!string.IsNullOrEmpty(AuthService.ErrorMessage))
-        {
-            <div class="alert alert-danger">
-                @AuthService.ErrorMessage
-            </div>
-        }
+
 
 
         <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
@@ -52,12 +47,6 @@
                 </div>
             </div>
 
-            @if (!string.IsNullOrEmpty(AuthService.ErrorMessage))
-            {
-                <div class="error-message">
-                    @AuthService.ErrorMessage
-                </div>
-            }
 
             <button type="submit" id="loginButton" class="login">Войти</button>
         </EditForm>
@@ -66,6 +55,13 @@
 </div>
 
 @code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.InitializeCsrfTokenAsync();
+    }
+
+
     private LoginModel loginModel = new LoginModel();
     private bool ShowPassword { get; set; } = false;
     private string PasswordInputType => ShowPassword ? "text" : "password";

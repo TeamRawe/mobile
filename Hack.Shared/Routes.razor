@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
+@inject AuthService AuthService
 
 <Router AppAssembly="typeof(Layout.MainLayout).Assembly">
     <Found Context="routeData">
@@ -13,43 +14,18 @@
 </Router>
 
 @code {
-    private RouteData routeData;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // Проверяем наличие cookies
-            var sessionId = await GetCookieValue("sessionId");
-            var csrfToken = await GetCookieValue("csrfToken");
-
-            if (string.IsNullOrEmpty(sessionId) || string.IsNullOrEmpty(csrfToken))
+            // Ожидаем результат асинхронного метода IsAuthenticatedAsync()
+            if (!await AuthService.IsAuthenticatedAsync())
             {
-                // Если cookies отсутствуют, перенаправляем на страницу авторизации
                 Navigation.NavigateTo("/auth");
             }
-
-            // Создаем объект routeData с дополнительными данными маршрута
-            routeData = new RouteData(typeof(MainLayout), new Dictionary<string, object?>());
-
-            // Обновляем состояние компонента
-            StateHasChanged();
         }
     }
 
-    private async Task<string> GetCookieValue(string cookieName)
-    {
-        try
-        {
-            // Извлекаем значение куки
-            var cookieValue = await JSRuntime.InvokeAsync<string>("eval",
-                $"document.cookie.split('; ').find(row => row.startsWith('{cookieName}'))?.split('=')[1]");
-            return cookieValue ?? string.Empty;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting cookie: {ex.Message}");
-            return string.Empty;
-        }
-    }
+
+
 }

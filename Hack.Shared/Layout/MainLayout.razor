@@ -31,13 +31,6 @@
 
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // Проверяем статус авторизации только при первом рендере компонента
-            await AuthService.CheckLoginStatus();
-        }
-    }
+    
 
 }
