@@ -1,6 +1,6 @@
 ﻿@inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
 @inject AuthService AuthService
 
 @page "/auth"
@@ -26,7 +26,7 @@
 
 
 
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <EditForm Model="loginModel" OnValidSubmit="Login">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -42,8 +42,7 @@
                 <label for="password">Пароль</label>
                 <div class="sec-2">
                     <ion-icon name="lock-closed-outline"></ion-icon>
-                    <input class="pas" type="@PasswordInputType" name="password" placeholder="············" @bind="loginModel.Password" />
-                    <ion-icon class="see-password" name="@(ShowPassword ? "eye-off-outline" : "eye-outline")" @onclick="TogglePasswordVisibility"></ion-icon>
+                    <input class="pas" name="password" placeholder="············" @bind="loginModel.Password" />
                 </div>
             </div>
 
@@ -55,41 +54,28 @@
 </div>
 
 @code {
-
-    protected override async Task OnInitializedAsync()
-    {
-        await AuthService.InitializeCsrfTokenAsync();
-    }
-
-
     private LoginModel loginModel = new LoginModel();
-    private bool ShowPassword { get; set; } = false;
-    private string PasswordInputType => ShowPassword ? "text" : "password";
+    private bool loginError;
 
-    private async Task HandleLogin()
+    private async Task Login()
     {
-        var result = await AuthService.Login(loginModel.Email, loginModel.Password);
-        if (result)
+        var csrfToken = await AuthService.GetCsrfTokenAsync();
+        if (!string.IsNullOrEmpty(csrfToken))
         {
-            // Если авторизация прошла успешно, перенаправляем пользователя
-            NavigationManager.NavigateTo("/");
-        }
-        else
-        {
-            // Если произошла ошибка, отображаем сообщение об ошибке
-            StateHasChanged();
+            var success = await AuthService.LoginAsync(loginModel.Email, loginModel.Password, csrfToken);
+            if (success)
+            {
+                Navigation.NavigateTo("/"); // Редирект на страницу после успешного логина
+            }
+            else
+            {
+                loginError = true;
+            }
         }
     }
-
-    private void TogglePasswordVisibility()
-    {
-        ShowPassword = !ShowPassword;
-    }
-
     public class LoginModel
     {
         public string Email { get; set; }
         public string Password { get; set; }
     }
-
 }

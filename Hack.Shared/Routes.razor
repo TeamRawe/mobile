@@ -14,17 +14,7 @@
 </Router>
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // Ожидаем результат асинхронного метода IsAuthenticatedAsync()
-            if (!await AuthService.IsAuthenticatedAsync())
-            {
-                Navigation.NavigateTo("/auth");
-            }
-        }
-    }
+    
 
 
 
