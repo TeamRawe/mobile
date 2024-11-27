@@ -126,18 +126,35 @@ window.apiHandler = {
         }
     },
 
-    // Проверяет, авторизован ли пользователь
     async isAuthenticated() {
-        const sessionId = this.getCookie('sessionid'); // Получаем значение cookies с sessionid
-        if (sessionId) {
-            console.log("User is authenticated.");
-            return true;
-        } else {
-            console.log("User is not authenticated.");
+        try {
+            const sessionId = this.getCookie('sessionid');
+            if (!sessionId) {
+                console.log("User is not authenticated: no session cookie found.");
+                return false;
+            }
+
+            const response = await fetch(`${this.baseURL}/u/api/check_session/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": this.getCSRFToken() 
+                },
+                credentials: 'include', 
+            });
+            console.log("Response status:", response.status);
+            if (response.ok) {
+                console.log("User is authenticated.");
+                return true;
+            } else {
+                console.log("User is not authenticated: session invalid or expired.");
+                return false;
+            }
+        } catch (error) {
+            console.error("Error checking authentication:", error);
             return false;
         }
     },
-
     // Функция для получения cookie по имени
     getCookie(name) {
         const cookieArr = document.cookie.split(";"); // Разбиваем строку cookies
@@ -148,5 +165,20 @@ window.apiHandler = {
             }
         }
         return null; // Если cookie не найдена, возвращаем null
+    },
+
+    async fetchProjects() {
+        const response = await fetch(`${this.baseURL}/p/api/projects/assign/`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.getCSRFToken()
+            },
+            credentials: "include"
+        });
+    if (!response.ok) {
+        throw new Error("Ошибка при загрузке проектов: " + response.statusText);
+    }
+    return await response.json();
     }
 };

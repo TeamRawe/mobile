@@ -97,9 +97,9 @@
         if (!string.IsNullOrEmpty(userId))
         {
             Console.WriteLine($"Авторизация успешна! ID пользователя: {userId}");
-            StateContainer.SetUserId(userId);
+            StateContainer.SetUserIdAsync(userId);
 
-            NavigationManager.NavigateTo("/"); // Редирект на главную страницу
+            NavigationManager.NavigateTo("/home"); // Редирект на главную страницу
         }
         else
         {

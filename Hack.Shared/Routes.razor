@@ -17,13 +17,10 @@
     {
         if (firstRender)
         {
-            // Проверка авторизации через JS
             var isAuthenticated = await JSRuntime.InvokeAsync<bool>("apiHandler.isAuthenticated");
-
-            // Если не авторизован, перенаправляем на страницу авторизации
             if (!isAuthenticated)
             {
-                Navigation.NavigateTo("/auth");
+                await InvokeAsync(() => Navigation.NavigateTo("/auth", true));
             }
         }
     }

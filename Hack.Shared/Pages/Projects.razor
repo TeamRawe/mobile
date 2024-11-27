@@ -1,0 +1,91 @@
+@page "/projects"
+
+@layout MainLayout
+
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Проекты</PageTitle>
+
+@if (projects == null)
+{
+    <p>Загрузка проектов...</p>
+}
+else if (!projects.Any())
+{
+    <p>Проекты отсутствуют.</p>
+}
+else
+{
+    <table class="projects-table">
+        <thead>
+            <tr>
+                <th>Проект</th>
+                <th>Заказчик</th>
+                <th>Дата начала</th>
+                <th>Дата конца</th>
+                <th>Прогресс</th>
+                <th>Статус</th>
+                <th>Предполагаемая цена</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in projects)
+            {
+                <tr>
+                    <td>
+                        @if (project.HasStages)
+                        {
+                            <a href="@($"/projects/{project.Id}")">@project.Title</a>
+                        }
+                        else
+                        {
+                            @project.Title
+                        }
+                    </td>
+                    <td>@project.Customer</td>
+                    <td>@project.StartDate.ToString("dd.MM.yyyy")</td>
+                    <td>@project.EndDate.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: @project.Progress%"></div>
+                        </div>
+                        @project.Progress%
+                    </td>
+                    <td>@GetStatus(project)</td>
+                    <td>@project.PlannedCost.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ProjectModel> projects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Вызываем функцию fetchProjects из JavaScript
+        projects = await JSRuntime.InvokeAsync<List<ProjectModel>>("apiHandler.fetchProjects");
+    }
+
+    private string GetStatus(ProjectModel project)
+    {
+        var today = DateTime.Today;
+        if (project.EndDate < today) return "Завершённый";
+        if (project.StartDate > today) return "Ожидается";
+        return "Активный";
+    }
+
+    private class ProjectModel
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public decimal PlannedCost { get; set; }
+        public string Customer { get; set; }
+        public int Progress { get; set; }
+        public bool HasStages { get; set; }
+    }
+}

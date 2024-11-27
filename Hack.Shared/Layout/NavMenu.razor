@@ -58,7 +58,7 @@
         <hr class="menu-divider" />
         <nav class="nav-container">
             <div class="nav-item">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <NavLink class="nav-link" href="projects" Match="NavLinkMatch.All">
                     <span class="nav-text">
                         <span class="project-icon" aria-hidden="true"></span> Проекты
                     </span>
@@ -80,12 +80,21 @@
             </div>
 
             <div class="nav-item">
-                <NavLink class="nav-link" href="weather">
+                <NavLink class="nav-link" href="diagram">
+                    <span class="nav-text">
+                        <span class="diagram-icon" aria-hidden="true"></span> Диаграммы
+                    </span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item">
+                <NavLink class="nav-link" href="help">
                     <span class="nav-text">
                         <span class="help-icon" aria-hidden="true"></span> Помощь
                     </span>
                 </NavLink>
             </div>
+
 
 
         </nav>
@@ -96,45 +105,57 @@
 
 @code {
     private bool showDropdown = false;
-    private string FirstName = "Имя";
-    private string LastName = "Фамилия";
-    private string MiddleName = "Отчество";
+    private string FirstName = "";
+    private string LastName = "";
+    private string MiddleName = "";
     private string Phone = "Телефон";
     private string Email = "Email";
 
     private string UserId;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Получаем UserId из StateContainer
-        UserId = StateContainer.GetUserId();
-
-        // Если UserId доступен, получаем данные пользователя
-        try
+        if (firstRender) // Этот блок будет выполняться только один раз при первом рендере компонента
         {
-            var userData = await JSRuntime.InvokeAsync<UserData>("apiHandler.getUserData", UserId);
+            // Получаем UserId из LocalStorage
+            await StateContainer.LoadUserIdAsync();
+            UserId = StateContainer.UserId; // Теперь UserId доступен
 
-            // Если данные получены, обновляем локальные переменные
-            if (userData != null)
+            // Если UserId доступен, получаем данные пользователя
+            if (!string.IsNullOrEmpty(UserId))
             {
-                FirstName = userData.FirstName;
-                LastName = userData.LastName;
-                MiddleName = userData.FatherName;
-                Phone = userData.Phone;
-                Email = userData.Email;
+                try
+                {
+                    var userData = await JSRuntime.InvokeAsync<UserData>("apiHandler.getUserData", UserId);
 
-                StateHasChanged();
+                    // Если данные получены, обновляем локальные переменные
+                    if (userData != null)
+                    {
+                        FirstName = userData.FirstName;
+                        LastName = userData.LastName;
+                        MiddleName = userData.FatherName;
+                        Phone = userData.Phone;
+                        Email = userData.Email;
+
+                        StateHasChanged(); // Обновляем интерфейс
+                    }
+                    else
+                    {
+                        Console.WriteLine("User data is null.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error fetching user data: {ex.Message}");
+                }
             }
             else
             {
-                Console.WriteLine("User data is null.");
+                Console.WriteLine("UserId is not available.");
             }
         }
-        catch {
-            NavigationManager.NavigateTo("/auth");
-        }
 
-        await base.OnInitializedAsync();
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 
