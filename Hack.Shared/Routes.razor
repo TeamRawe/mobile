@@ -13,43 +13,21 @@
 </Router>
 
 @code {
-    private RouteData routeData;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // Проверяем наличие cookies
-            var sessionId = await GetCookieValue("sessionId");
-            var csrfToken = await GetCookieValue("csrfToken");
+            // Проверка авторизации через JS
+            var isAuthenticated = await JSRuntime.InvokeAsync<bool>("apiHandler.isAuthenticated");
 
-            if (string.IsNullOrEmpty(sessionId) || string.IsNullOrEmpty(csrfToken))
+            // Если не авторизован, перенаправляем на страницу авторизации
+            if (!isAuthenticated)
             {
-                // Если cookies отсутствуют, перенаправляем на страницу авторизации
                 Navigation.NavigateTo("/auth");
             }
-
-            // Создаем объект routeData с дополнительными данными маршрута
-            routeData = new RouteData(typeof(MainLayout), new Dictionary<string, object?>());
-
-            // Обновляем состояние компонента
-            StateHasChanged();
         }
     }
 
-    private async Task<string> GetCookieValue(string cookieName)
-    {
-        try
-        {
-            // Извлекаем значение куки
-            var cookieValue = await JSRuntime.InvokeAsync<string>("eval",
-                $"document.cookie.split('; ').find(row => row.startsWith('{cookieName}'))?.split('=')[1]");
-            return cookieValue ?? string.Empty;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting cookie: {ex.Message}");
-            return string.Empty;
-        }
-    }
+
+
 }

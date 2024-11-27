@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject AuthService AuthService
 
 <div class="page">
     <div class="content-wrapper">
@@ -31,13 +30,6 @@
 
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // Проверяем статус авторизации только при первом рендере компонента
-            await AuthService.CheckLoginStatus();
-        }
-    }
+    
 
 }

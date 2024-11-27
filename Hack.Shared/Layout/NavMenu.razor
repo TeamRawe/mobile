@@ -1,23 +1,23 @@
-﻿@inject NavigationManager Navigation
-@inject AuthService AuthService
+﻿@inject NavigationManager NavigationManager
+@inject StateContainer StateContainer
 @inject IJSRuntime JSRuntime
 
 @using Hack.Shared.Pages
-
+<meta charset="UTF-8">
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 
 <div class="navmenu">
-   
+
     <!-- Navbar -->
     <header class="navbar">
         <a class="brand-nav" href="/">
             <span class="navbar-brand">ИСВС</span>
         </a>
         <div class="navbar-profile">
-            <span class="profile-name">Баженов Владимир Дмитриевич</span>
+            <span class="profile-name">@LastName @FirstName @MiddleName</span>
             <button id="icon-button" class="profile-link" @onclick="ToggleProfileDropdown">
                 <svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <title>profile_round</title>
@@ -38,7 +38,8 @@
                         <p><strong>Фамилия:</strong> @LastName</p>
                         <p><strong>Имя:</strong> @FirstName</p>
                         <p><strong>Отчество:</strong> @MiddleName</p>
-                        <p><strong>Должность:</strong> @Position</p>
+                        <p><strong>Телефон:</strong> @Phone</p>
+                        <p><strong>Почта:</strong> @Email</p>
                         <button class="Logout-button" @onclick="OnLogoutClicked">Выйти</button>
                     </div>
                 </div>
@@ -46,8 +47,8 @@
         </div>
     </header>
 
-    
-   
+
+
 
 
 
@@ -85,7 +86,7 @@
                     </span>
                 </NavLink>
             </div>
-            
+
 
         </nav>
 
@@ -94,12 +95,48 @@
 </div>
 
 @code {
-
     private bool showDropdown = false;
-    private string LastName = "Баженов";
-    private string FirstName = "Владимир";
-    private string MiddleName = "Дмитриевич";
-    private string Position = "Менеджер";
+    private string FirstName = "Имя";
+    private string LastName = "Фамилия";
+    private string MiddleName = "Отчество";
+    private string Phone = "Телефон";
+    private string Email = "Email";
+
+    private string UserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Получаем UserId из StateContainer
+        UserId = StateContainer.GetUserId();
+
+        // Если UserId доступен, получаем данные пользователя
+        try
+        {
+            var userData = await JSRuntime.InvokeAsync<UserData>("apiHandler.getUserData", UserId);
+
+            // Если данные получены, обновляем локальные переменные
+            if (userData != null)
+            {
+                FirstName = userData.FirstName;
+                LastName = userData.LastName;
+                MiddleName = userData.FatherName;
+                Phone = userData.Phone;
+                Email = userData.Email;
+
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("User data is null.");
+            }
+        }
+        catch {
+            NavigationManager.NavigateTo("/auth");
+        }
+
+        await base.OnInitializedAsync();
+    }
+
 
     // Функция для переключения состояния окна (открытие/закрытие)
     private void ToggleProfileDropdown()
@@ -115,6 +152,28 @@
 
     private async Task OnLogoutClicked()
     {
-        await AuthService.Logout();
+        // Вызов метода logout через JSRuntime
+        var result = await JSRuntime.InvokeAsync<bool>("apiHandler.logout");
+
+        if (result)
+        {
+            // Если выход успешен, перенаправляем на страницу входа или другую страницу
+            NavigationManager.NavigateTo("/auth");
+        }
+        else
+        {
+            // Если произошла ошибка, отображаем сообщение
+            Console.Error.WriteLine("Ошибка при выходе!");
+        }
     }
+
+    public class UserData
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FatherName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+    }
+    UserData userData = new UserData();
 }
