@@ -1,7 +1,8 @@
-﻿@inject HttpClient HttpClient
+﻿
 @inject IJSRuntime JSRuntime
-@inject NavigationManager Navigation
-@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@inject StateContainer StateContainer
+
 
 @page "/auth"
 @layout EmptyLayout
@@ -26,7 +27,7 @@
 
 
 
-        <EditForm Model="loginModel" OnValidSubmit="Login">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -42,7 +43,8 @@
                 <label for="password">Пароль</label>
                 <div class="sec-2">
                     <ion-icon name="lock-closed-outline"></ion-icon>
-                    <input class="pas" name="password" placeholder="············" @bind="loginModel.Password" />
+                    <input class="pas" type="@PasswordInputType" name="password" placeholder="············" @bind="loginModel.Password" />
+                    <ion-icon class="see-password" name="@(ShowPassword ? "eye-off-outline" : "eye-outline")" @onclick="TogglePasswordVisibility"></ion-icon>
                 </div>
             </div>
 
@@ -55,24 +57,65 @@
 
 @code {
     private LoginModel loginModel = new LoginModel();
-    private bool loginError;
+    private bool isLoginFailed = false;
+    private bool ShowPassword { get; set; } = false;
+    private string PasswordInputType => ShowPassword ? "text" : "password";
 
-    private async Task Login()
+    private bool isConnected;
+
+
+    // Этот метод вызывается после первого рендера компонента
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var csrfToken = await AuthService.GetCsrfTokenAsync();
-        if (!string.IsNullOrEmpty(csrfToken))
+        if (firstRender)
         {
-            var success = await AuthService.LoginAsync(loginModel.Email, loginModel.Password, csrfToken);
-            if (success)
-            {
-                Navigation.NavigateTo("/"); // Редирект на страницу после успешного логина
-            }
-            else
-            {
-                loginError = true;
-            }
+            // Асинхронный вызов для тестирования соединения
+            isConnected = await JSRuntime.InvokeAsync<bool>("apiHandler.testConnection");
+            StateHasChanged();  // Обновляет UI после изменения состояния
         }
     }
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            // Вызов метода JS в OnAfterRenderAsync
+            await InvokeLoginAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Ошибка при вызове JavaScript: {ex.Message}");
+            isLoginFailed = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task InvokeLoginAsync()
+    {
+        var userId = await JSRuntime.InvokeAsync<string>("apiHandler.login", loginModel.Email, loginModel.Password);
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            Console.WriteLine($"Авторизация успешна! ID пользователя: {userId}");
+            StateContainer.SetUserIdAsync(userId);
+
+            NavigationManager.NavigateTo("/home"); // Редирект на главную страницу
+        }
+        else
+        {
+            Console.WriteLine("Авторизация не удалась.");
+            isLoginFailed = true;
+            StateHasChanged(); // Обновляем UI
+        }
+    }
+
+    // Проверяем состояние компонента после первого рендера
+
+    private void TogglePasswordVisibility()
+    {
+        ShowPassword = !ShowPassword;
+    }
+
     public class LoginModel
     {
         public string Email { get; set; }

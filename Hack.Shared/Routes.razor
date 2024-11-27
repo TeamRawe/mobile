@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
-@inject AuthService AuthService
 
 <Router AppAssembly="typeof(Layout.MainLayout).Assembly">
     <Found Context="routeData">
@@ -14,7 +13,17 @@
 </Router>
 
 @code {
-    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var isAuthenticated = await JSRuntime.InvokeAsync<bool>("apiHandler.isAuthenticated");
+            if (!isAuthenticated)
+            {
+                await InvokeAsync(() => Navigation.NavigateTo("/auth", true));
+            }
+        }
+    }
 
 
 

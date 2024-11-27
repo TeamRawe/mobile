@@ -67,7 +67,18 @@ footer {
     left: 50%;
     transform: translateX(-50%); /* Центрирование по горизонтали */
     font-size: 30px;
-    font-weight: 400;
+    font-weight: 700;
     color: #0ABAB5;
 }
 
+
+.right-inf {
+    margin-left:auto;
+    margin-right: 50px;
+}
+
+.footer-right-inf {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0ABAB5;
+}

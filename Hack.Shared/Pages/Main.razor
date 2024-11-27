@@ -1,0 +1,25 @@
+﻿@page "/"
+@layout EmptyLayout
+@inject NavigationManager NavigationManager
+<PageTitle>ИСВС-платформа</PageTitle>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+
+<head>
+    <link href="_content/Hack.Shared/scss/newstyle.css" rel="stylesheet" />
+</head>
+
+<div class="container">
+    <h1 class="title">ИСВС</h1>
+    <button class="login-button" @onclick="NavigateToAuth">Приступить к работе</button>
+</div>
+
+@code {
+    private void NavigateToAuth()
+    {
+        NavigationManager.NavigateTo("/auth");
+    }
+}
