@@ -1,7 +1,8 @@
-﻿@inject HttpClient HttpClient
+﻿
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
-@inject AuthService AuthService
+@inject StateContainer StateContainer
+
 
 @page "/auth"
 @layout EmptyLayout
@@ -26,7 +27,7 @@
 
 
 
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -55,31 +56,60 @@
 </div>
 
 @code {
-
-    protected override async Task OnInitializedAsync()
-    {
-        await AuthService.InitializeCsrfTokenAsync();
-    }
-
-
     private LoginModel loginModel = new LoginModel();
+    private bool isLoginFailed = false;
     private bool ShowPassword { get; set; } = false;
     private string PasswordInputType => ShowPassword ? "text" : "password";
 
+    private bool isConnected;
+
+
+    // Этот метод вызывается после первого рендера компонента
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Асинхронный вызов для тестирования соединения
+            isConnected = await JSRuntime.InvokeAsync<bool>("apiHandler.testConnection");
+            StateHasChanged();  // Обновляет UI после изменения состояния
+        }
+    }
+
     private async Task HandleLogin()
     {
-        var result = await AuthService.Login(loginModel.Email, loginModel.Password);
-        if (result)
+        try
         {
-            // Если авторизация прошла успешно, перенаправляем пользователя
-            NavigationManager.NavigateTo("/");
+            // Вызов метода JS в OnAfterRenderAsync
+            await InvokeLoginAsync();
         }
-        else
+        catch (Exception ex)
         {
-            // Если произошла ошибка, отображаем сообщение об ошибке
+            Console.Error.WriteLine($"Ошибка при вызове JavaScript: {ex.Message}");
+            isLoginFailed = true;
             StateHasChanged();
         }
     }
+
+    private async Task InvokeLoginAsync()
+    {
+        var userId = await JSRuntime.InvokeAsync<string>("apiHandler.login", loginModel.Email, loginModel.Password);
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            Console.WriteLine($"Авторизация успешна! ID пользователя: {userId}");
+            StateContainer.SetUserId(userId);
+
+            NavigationManager.NavigateTo("/"); // Редирект на главную страницу
+        }
+        else
+        {
+            Console.WriteLine("Авторизация не удалась.");
+            isLoginFailed = true;
+            StateHasChanged(); // Обновляем UI
+        }
+    }
+
+    // Проверяем состояние компонента после первого рендера
 
     private void TogglePasswordVisibility()
     {
@@ -91,5 +121,4 @@
         public string Email { get; set; }
         public string Password { get; set; }
     }
-
 }
