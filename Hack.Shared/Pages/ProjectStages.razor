@@ -1,0 +1,311 @@
+@page "/projects/{projectName}/Stages"
+@layout MainLayout
+
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.WebUtilities
+
+<PageTitle>Этапы проекта</PageTitle>
+
+<h2 class="name">Этапы проекта: @ProjectName</h2>
+
+@if (stages == null)
+{
+    <p>Загрузка данных...</p>
+}
+else
+{
+    <table class="table custom-table">
+        <thead>
+            <tr>
+                <th>Этап</th>
+                <th>Подрядчик</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Прогресс</th>
+                <th>Статус</th>
+                <th>Плановая стоимость</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stage in stages.Where(s => s.ParentStage == null))
+            {
+                <tr>
+                    <td @onclick="() => ToggleSubStages(stage.Id)">
+                        <b>@stage.Title</b>
+                        <button class="btn btn-info btn-sm" style="display: none;" @onclick="() => ToggleSubStages(stage.Id)">Подробнее</button>
+                    </td>
+                    <td>@(stage.WorkerName ?? "Загрузка...")</td>
+                    <td>@(DateTime.TryParse(stage.StartDate, out var startDate) ? startDate.ToString("dd.MM.yyyy") : "Неверная дата")</td>
+                    <td>@(DateTime.TryParse(stage.EndDate, out var endDate) ? endDate.ToString("dd.MM.yyyy") : "Неверная дата")</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: @(stage.Progress)%"></div>
+                        </div>
+                        <span>@stage.Progress %</span>
+                    </td>
+                    <td>@stage.Status</td>
+                    <td>@stage.PlannedCost</td>
+                </tr>
+
+                @if (IsSubStagesVisible(stage.Id))
+                {
+                    @RenderSubStages(stage.Id)
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public Guid ProjectId { get; set; }
+    private List<Stage>? stages;
+    private HashSet<string> visibleSubStages = new HashSet<string>(); // Хранит раскрытые этапы
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var stagesUrl = ProjectId;
+            var rawStages = await JSRuntime.InvokeAsync<List<RawStage>>("apiHandler.fetchStages", stagesUrl);
+
+            // Преобразование данных
+            stages = rawStages.Select(s => new Stage
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    StartDate = s.Start_Date,
+                    EndDate = s.End_Date,
+                    PlannedCost = FormatCost(s.Planned_Cost),
+                    WorkerId = s.Worker,
+                    ParentStage = s.Parent_Stage,
+                    Progress = s.Progress,
+                    Status = s.Status
+                }).ToList();
+
+            // Загрузка названий подрядчиков асинхронно
+            foreach (var stage in stages)
+            {
+                stage.WorkerName = await LoadWorkerNameAsync(stage.WorkerId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Ошибка загрузки этапов: " + ex.Message);
+        }
+    }
+
+    private async Task<string> LoadWorkerNameAsync(string workerId)
+    {
+        try
+        {
+            // Если workerId пустой, возвращаем "Не указан"
+            if (string.IsNullOrEmpty(workerId))
+            {
+                return "Не указан";
+            }
+
+            // Вызываем API для получения названия подрядчика
+            var response = await JSRuntime.InvokeAsync<string>("apiHandler.getWorkerName", workerId);
+
+            // Проверяем, есть ли ответ
+            if (string.IsNullOrWhiteSpace(response))
+            {
+                return "Название не найдено";
+            }
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка загрузки названия подрядчика для WorkerId {workerId}: {ex.Message}");
+            return "Ошибка загрузки";
+        }
+    }
+
+    // Метод для определения видимости подэтапов
+    private bool IsSubStagesVisible(string stageId)
+    {
+        return visibleSubStages.Contains(stageId);
+    }
+
+    // Метод для переключения состояния подэтапов (открыть/закрыть)
+    private void ToggleSubStages(string stageId)
+    {
+        if (visibleSubStages.Contains(stageId))
+        {
+            visibleSubStages.Remove(stageId); // Скрыть подэтапы
+        }
+        else
+        {
+            visibleSubStages.Add(stageId); // Показать подэтапы
+        }
+    }
+
+    private string FormatCost(string cost)
+    {
+        try
+        {
+            // Убираем лишние пробелы и пробуем конвертировать строку в число
+            var costValue = decimal.Parse(cost, System.Globalization.CultureInfo.InvariantCulture);
+
+            // Форматируем как "2.234.900,00 руб." (с использованием запятой для десятичных знаков)
+            return costValue.ToString("#,0.00", System.Globalization.CultureInfo.GetCultureInfo("ru-RU")) + " руб.";
+        }
+        catch
+        {
+            return "Ошибка формата стоимости"; // Возвращаем ошибку, если не удалось распарсить
+        }
+    }
+
+    private RenderFragment RenderSubStages(string parentStageId) => __builder =>
+     {
+     var subStages = stages.Where(s => s.ParentStage == parentStageId).ToList();
+
+     if (subStages.Any())
+     {
+         __builder.OpenElement(0, "tr");
+         __builder.OpenElement(1, "td");
+         __builder.AddAttribute(2, "colspan", "7"); // Подэтапы занимают всю ширину основной таблицы
+
+         // Вложенная таблица
+         __builder.OpenElement(3, "table");
+         __builder.AddAttribute(4, "class", "table sub-table"); // Класс для стилизации подэтапов
+
+         // Заголовок таблицы подэтапов
+         __builder.OpenElement(5, "thead");
+         __builder.OpenElement(6, "tr");
+         __builder.AddMarkupContent(7, @"
+            <th>Подэтап</th>
+            <th>Подрядчик</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+            <th>Прогресс</th>
+            <th>Статус</th>
+            <th>Плановая стоимость</th>
+        ");
+         __builder.CloseElement(); // Закрываем <tr>
+         __builder.CloseElement(); // Закрываем <thead>
+
+         // Тело таблицы подэтапов
+         __builder.OpenElement(8, "tbody");
+         foreach (var subStage in subStages)
+         {
+             __builder.OpenElement(9, "tr");
+             __builder.AddAttribute(10, "class", "sub-stage-row");
+
+             // Название подэтапа
+             __builder.OpenElement(11, "td");
+             __builder.AddContent(12, subStage.Title);
+             __builder.CloseElement();
+
+             // Подрядчик
+             __builder.OpenElement(13, "td");
+             __builder.AddContent(14, subStage.WorkerName ?? "Загрузка...");
+             __builder.CloseElement();
+
+             // Дата начала
+             __builder.OpenElement(15, "td");
+             __builder.AddContent(16, DateTime.TryParse(subStage.StartDate, out var startDate) ? startDate.ToString("dd.MM.yyyy") : "Неверная дата");
+             __builder.CloseElement();
+
+             // Дата окончания
+             __builder.OpenElement(17, "td");
+             __builder.AddContent(18, DateTime.TryParse(subStage.EndDate, out var endDate) ? endDate.ToString("dd.MM.yyyy") : "Неверная дата");
+             __builder.CloseElement();
+
+             // Прогресс
+                 // Прогресс
+                 __builder.OpenElement(19, "td");
+
+                 // Внешний контейнер прогресс-бара
+                 __builder.OpenElement(20, "div");
+                 __builder.AddAttribute(21, "style", "background-color: #e0e0e0; border-radius: 5px; overflow: hidden; height: 10px; width: 100%; position: relative;");
+
+                 // Внутренний заполненный прогресс
+                 __builder.OpenElement(22, "div");
+                 __builder.AddAttribute(23, "style", $"background-color: #4CAF50; height: 100%; width: {subStage.Progress}%; transition: width 0.3s ease-in-out;");
+                 __builder.CloseElement(); // Закрываем div.custom-progress
+
+                 __builder.CloseElement(); // Закрываем div.custom-progress-bar
+
+                 // Текст процентов под прогресс-баром
+                 __builder.OpenElement(24, "span");
+                 __builder.AddAttribute(25, "style", "display: block; margin-top: 5px; font-size: 14px; color: #061C42; text-align: center;");
+                 __builder.AddContent(26, $"{subStage.Progress}%");
+                 __builder.CloseElement(); // Закрываем span
+
+                 __builder.CloseElement(); // Закрываем td
+
+
+             // Статус
+             __builder.OpenElement(27, "td");
+             __builder.AddContent(28, subStage.Status);
+             __builder.CloseElement();
+
+             // Плановая стоимость
+             __builder.OpenElement(29, "td");
+             __builder.AddContent(30, subStage.PlannedCost);
+             __builder.CloseElement();
+
+             __builder.CloseElement(); // Закрываем строку подэтапа
+         }
+         __builder.CloseElement(); // Закрываем tbody
+         __builder.CloseElement(); // Закрываем таблицу
+         __builder.CloseElement(); // Закрываем td
+         __builder.CloseElement(); // Закрываем tr
+     }
+     };
+
+
+
+    public class RawStage
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Start_Date { get; set; }
+        public string End_Date { get; set; }
+        public string Planned_Cost { get; set; }
+        public string Worker { get; set; }
+        public string? Parent_Stage { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class Stage
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public string PlannedCost { get; set; }
+        public string WorkerId { get; set; }
+        public string? WorkerName { get; set; }
+        public string? ParentStage { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
+    }
+
+    [Parameter] public string ProjectName { get; set; }
+
+
+    protected override void OnInitialized()
+{
+    // Извлекаем ID проекта из параметров запроса
+    var uri = new Uri(Navigation.Uri);
+    var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+    if (queryParams.ContainsKey("projectId"))
+    {
+        var projectIdString = queryParams["projectId"].ToString(); // Получаем строку
+        if (Guid.TryParse(projectIdString, out var parsedProjectId))
+        {
+            ProjectId = parsedProjectId; // Преобразуем в Guid
+        }
+        else
+        {
+            Console.WriteLine("Некорректный формат ProjectId");
+        }
+    }
+}
+}

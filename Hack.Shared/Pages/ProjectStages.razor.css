@@ -1,0 +1,131 @@
+/* Основные стили для таблицы */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    color: #061C42; /* Основной цвет текста */
+}
+
+    .table th {
+        background-color: #fff; /* Цвет заголовка */
+        color: #061C42; /* Основной цвет текста */
+        padding: 10px 15px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .table td {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        vertical-align: middle;
+        color: #061C42; /* Основной цвет текста */
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #f9f9f9; /* Полосатость строк */
+    }
+
+    .table tr:hover {
+        background-color: #f1f1f1; /* Цвет при наведении */
+    }
+
+/* Стили для подэтапов */
+.sub-stage-row {
+    background-color: #f3f3f3; /* Светло-серый фон для подэтапов */
+    transition: all 0.3s ease-in-out; /* Плавное появление */
+    color: #061C42; /* Основной цвет текста */
+}
+
+    .sub-stage-row td {
+        padding-left: 30px; /* Дополнительный отступ для подэтапов */
+        font-style: italic;
+    }
+
+    /* Анимация появления подэтапов */
+    .sub-stage-row.hidden {
+        display: none; /* Скрытые подэтапы по умолчанию */
+    }
+
+    .sub-stage-row.visible {
+        display: table-row; /* Отображение строк при открытии */
+    }
+
+/* Прогресс бар */
+.progress-bar {
+    background-color: #e0e0e0; /* Фон прогресс-бара */
+    border-radius: 5px;
+    overflow: hidden;
+    height: 10px;
+    width: 100%;
+    margin: 5px 0;
+    position: relative;
+}
+
+    .progress-bar .progress {
+        background-color: #4CAF50; /* Цвет заполнения */
+        height: 100%;
+        transition: width 0.3s ease-in-out; /* Плавное изменение ширины */
+    }
+
+/* Акцент на этапах при клике */
+.stage-row {
+    cursor: pointer;
+}
+
+    .stage-row:hover {
+        background-color: #dcedc8; /* Легкий акцент при наведении */
+    }
+
+/* Добавляем акцент при наведении */
+/* Стили для таблицы подэтапов */
+.sub-table {
+    background-color: #f8f9fa; /* Светло-серый фон для затемнения */
+    border: 1px solid #d6d8db; /* Лёгкая рамка вокруг таблицы */
+    border-radius: 5px; /* Закруглённые углы */
+    width: 100%; /* Ограничение ширины */
+    table-layout: fixed; /* Фиксированная ширина колонок */
+    margin-bottom: 15px; /* Отступ снизу */
+}
+
+    /* Стили для заголовков таблицы */
+    .sub-table thead th {
+        background-color: #e9ecef; /* Цвет фона заголовков */
+        color: #495057; /* Цвет текста */
+        text-align: left; /* Выравнивание текста */
+        padding: 8px; /* Отступы */
+        font-size: 14px; /* Размер шрифта */
+    }
+
+    /* Стили для строк таблицы */
+    .sub-table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Разделительная линия между строками */
+    }
+
+    /* Стили для ячеек */
+    .sub-table td {
+        padding: 8px; /* Отступы внутри ячеек */
+        font-size: 13px; /* Размер текста */
+        overflow: hidden; /* Обрезка содержимого */
+        text-overflow: ellipsis; /* Добавление троеточия, если текст не помещается */
+        white-space: nowrap; /* Запрет переноса текста */
+    }
+
+
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto; /* Добавление горизонтального скроллинга */
+}
+
+
+/* Подчеркиваем, что это подэтапы */
+.sub-stage-row {
+    font-style: italic;
+    background-color: #f9f9f9; /* Небольшое выделение */
+}
+
+    .sub-stage-row td:first-child {
+        padding-left: 20px; /* Дополнительный отступ для обозначения вложенности */
+    }

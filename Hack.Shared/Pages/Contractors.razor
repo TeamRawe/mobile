@@ -1,0 +1,64 @@
+@page "/contractors"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Подрядчики</PageTitle>
+
+<div class="container">
+    <h1 class="page-title">Список Подрядчиков</h1>
+
+    <div class="contractor-cards-container">
+        @if (contractors == null)
+        {
+            <p>Загрузка данных...</p>
+        }
+        else if (contractors.Any())
+        {
+            @foreach (var contractor in contractors)
+            {
+                <div class="contractor-card">
+                    <h5>@contractor.Title</h5>
+                    <p>ИНН: @contractor.INN</p>
+                    <p>ОГРН: @contractor.OGRN</p>
+                    <p>Телефон: @contractor.Phone</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Нет данных о подрядчиках.</p>
+        }
+    </div>
+
+    <p id="error-message" style="color: red; display: none;">Ошибка загрузки данных о подрядчиках.</p>
+</div>
+
+@code {
+    private List<Contractor> contractors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadContractorsDataFromJS();
+    }
+
+    private async Task LoadContractorsDataFromJS()
+    {
+        try
+        {
+            var result = await JSRuntime.InvokeAsync<List<Contractor>>("apiHandler.getContractorsData");
+            contractors = result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Ошибка загрузки данных через JS: " + ex.Message);
+            contractors = new List<Contractor>();
+        }
+    }
+
+    public class Contractor
+    {
+        public string Title { get; set; }
+        public string INN { get; set; }
+        public string OGRN { get; set; }
+        public string Phone { get; set; }
+    }
+}

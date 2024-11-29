@@ -168,7 +168,7 @@ window.apiHandler = {
     },
 
     async fetchProjects() {
-        const response = await fetch(`${this.baseURL}/p/api/projects/assign/`, {
+        const response = await fetch(`${this.baseURL}/p/api/e/user_projects/`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -180,5 +180,360 @@ window.apiHandler = {
         throw new Error("Ошибка при загрузке проектов: " + response.statusText);
     }
     return await response.json();
+    },
+    async getCustomerName(customerId) {
+        try {
+            const response = await fetch(`${this.baseURL}/c/api/govs/${customerId}/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                console.error("Ошибка загрузки заказчика:", response.status, response.statusText);
+                throw new Error("Ошибка загрузки заказчика: " + response.statusText);
+            }
+
+            // Извлечение только поля title из ответа
+            const data = await response.json();
+            console.log(`Имя заказчика (${customerId}):`, data.title); // Получаем только title
+            return data.title; // Возвращаем только title
+        } catch (error) {
+            console.error(`Ошибка в getCustomerName для ID ${customerId}:`, error.message);
+            throw error;
+        }
+    },
+
+    async fetchStages(projectId) {
+        try {
+            const apiUrl = `${this.baseURL}/p/api/e/project_stages/${projectId}/`;
+
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                credentials: "include"
+            });
+
+            // Проверка успешности запроса
+            if (!response.ok) {
+                throw new Error(`Ошибка запроса: ${response.status} ${response.statusText}`);
+            }
+
+            // Парсим данные
+            const stages = await response.json();
+
+            // Если нет данных, возвращаем пустой массив
+            if (!stages || stages.length === 0) {
+                console.log('Нет данных для этапов');
+                return []; // Возвращаем пустой список
+            }
+
+            return stages;
+        } catch (error) {
+            console.error('Ошибка загрузки данных об этапах проекта:', error);
+            return []; // Возвращаем пустой список в случае ошибки
+        }
+    },
+    async getWorkerName(workerId) {
+        try {
+            // Формируем URL для запроса
+            const apiUrl = `${this.baseURL}/c/api/subs/${workerId}/`;
+
+            // Выполняем запрос
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "X-CSRFToken": this.getCSRFToken() // Если нужен CSRF-токен
+                },
+                credentials: "include" // Для отправки cookies вместе с запросом
+            });
+
+            // Проверяем успешность ответа
+            if (!response.ok) {
+                console.error(`Ошибка запроса для подрядчика ID ${workerId}: ${response.status} ${response.statusText}`);
+                throw new Error(`Ошибка запроса: ${response.status} ${response.statusText}`);
+            }
+
+            // Парсим данные из ответа
+            const workerData = await response.json();
+
+            // Проверяем наличие поля title
+            if (!workerData || !workerData.title) {
+                console.error(`Данные для подрядчика ID ${workerId} некорректны или отсутствует поле title.`);
+                return "Неизвестный подрядчик"; // Возвращаем сообщение вместо null
+            }
+
+            // Возвращаем поле title
+            console.log(`Название подрядчика (${workerId}):`, workerData.title);
+            return workerData.title;
+        } catch (error) {
+            console.error(`Ошибка загрузки подрядчика ID ${workerId}:`, error.message);
+            return "Ошибка загрузки"; // Возвращаем сообщение об ошибке
+        }
+    },
+
+
+    //               FOR          DOCUMENTS 
+
+    // Получить список проектов с фильтрацией
+    async getProjects() {
+    try {
+        const response = await fetch(`${this.baseURL}/p/api/e/user_projects/`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.getCSRFToken()
+            },
+            credentials: "include"
+        });
+        if (!response.ok) {
+            throw new Error("Ошибка загрузки проектов");
+        }
+        const projects = await response.json();
+        // Возвращаем только id и title
+        return projects.map(project => ({
+            id: project.id,
+            title: project.title
+        }));
+    } catch (error) {
+        console.error("Ошибка запроса getProjects:", error);
+        return [];
+        }
+    },
+
+    // Получить список этапов проекта с фильтрацией
+    async getStages(projectId) {
+    try {
+        const response = await fetch(`${this.baseURL}/p/api/e/project_stages/${projectId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.getCSRFToken()
+            },
+            credentials: "include"
+        });
+        if (!response.ok) {
+            throw new Error("Ошибка загрузки этапов");
+        }
+        const stages = await response.json();
+        // Возвращаем только id и title
+        return stages.map(stage => ({
+            id: stage.id,
+            title: stage.title
+        }));
+    } catch (error) {
+        console.error("Ошибка запроса getStages:", error);
+        return [];
+        }
+    },
+
+    // Получить файлы проекта (без изменений)
+    async getProjectFiles(projectId) {
+        try {
+            const response = await fetch(`${this.baseURL}/p/api/e/project_files/${projectId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка загрузки файлов проекта");
+            }
+
+            const data = await response.json();
+
+            // Формирование корректных ссылок для каждого файла
+            return data.map(file => ({
+                id: file.id,
+                name: file.file_name, // Добавляем поле file_name
+                filePath: file.file, // Путь к файлу на сервере
+                fileUrl: `${this.baseURL}${file.file}`, // Формируем полный URL для скачивания
+                createdAt: this.formatDate(file.created_at)
+            }));
+        } catch (error) {
+            console.error("Ошибка запроса getProjectFiles:", error);
+            return [];
+        }
+    },
+
+    async getStageFiles(stageId) {
+        try {
+            const response = await fetch(`${this.baseURL}/p/api/e/stage_files/${stageId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка загрузки файлов этапа");
+            }
+
+            const data = await response.json();
+
+            // Формирование корректных ссылок для каждого файла
+            return data.map(file => ({
+                id: file.id,
+                name: file.file_name, // Добавляем поле file_name
+                filePath: file.file, // Путь к файлу на сервере
+                fileUrl: `${this.baseURL}${file.file}`, // Формируем полный URL для скачивания
+                createdAt: this.formatDate(file.created_at) // Форматируем дату
+            }));
+        } catch (error) {
+            console.error("Ошибка запроса getStageFiles:", error);
+            return [];
+        }
+    },
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat("ru-RU", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(date);
+    },
+    async downloadFile(fileId, fileName) {
+        try {
+            const response = await fetch(`${this.baseURL}/p/api/e/download_file/${fileId}/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRFToken() // Указываем CSRF токен для безопасности
+                },
+                credentials: "include", // Включаем куки для аутентификации
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка скачивания файла");
+            }
+
+            // Получаем файл как блоб
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            // Создаем элемент ссылки для скачивания
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName; // Используем переданное имя файла
+            link.click(); // Имитируем клик по ссылке для скачивания
+
+            // Освобождаем ресурс
+            window.URL.revokeObjectURL(url);
+
+            console.log("Файл успешно загружен!");
+        } catch (error) {
+            console.error("Ошибка при скачивании файла:", error);
+        }
+    },
+
+    async uploadFile(fileData) {
+        try {
+            const formData = new FormData();
+            // Добавляем файл
+            formData.append("file", fileData.selectedFile); // Переданный файл
+            // Добавляем другие данные (projectId, stageId)
+            formData.append("projectId", fileData.projectId);
+            formData.append("stageId", fileData.stageId || ""); // Пустое значение, если stageId не задан
+
+            const response = await fetch(`${this.baseURL}/p/api/files/`, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": this.getCSRFToken() // Указываем CSRF токен для безопасности
+                },
+                credentials: "include", // Включаем куки для аутентификации
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка загрузки файла");
+            }
+
+            const result = await response.json(); // Предполагаем, что сервер возвращает JSON
+            console.log("Файл успешно загружен:", result.message);
+        } catch (error) {
+            console.error("Ошибка при загрузке файла:", error);
+        }
+    },
+    async getCustomerData() {
+        try {
+            // Выполнение GET-запроса на ручку для получения данных
+            const response = await fetch(`${this.baseURL}/c/api/govs/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка загрузки данных о компаниях");
+            }
+
+            const data = await response.json();
+
+            // Оставляем только нужные поля
+            return data.map(customer => ({
+                title: customer.title,
+                inn: customer.inn,
+                ogrn: customer.ogrn,
+                phone: customer.phone
+            }));
+        } catch (error) {
+            console.error("Ошибка запроса getCustomerData:", error);
+            return [];
+        }
+    },
+    async getContractorsData() {
+        try {
+            // Выполнение GET-запроса на ручку для получения данных
+            const response = await fetch(`${this.baseURL}/c/api/subs/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": this.getCSRFToken()
+                },
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка загрузки данных о компаниях");
+            }
+
+            const data = await response.json();
+
+            // Оставляем только нужные поля
+            return data.map(customer => ({
+                title: customer.title,
+                inn: customer.inn,
+                ogrn: customer.ogrn,
+                phone: customer.phone
+            }));
+        } catch (error) {
+            console.error("Ошибка запроса getCustomerData:", error);
+            return [];
+        }
     }
+
+
+
+
+
+
+
+
 };

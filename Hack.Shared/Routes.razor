@@ -13,17 +13,30 @@
 </Router>
 
 @code {
+    private bool _isRedirected = false;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && !_isRedirected)
         {
-            var isAuthenticated = await JSRuntime.InvokeAsync<bool>("apiHandler.isAuthenticated");
-            if (!isAuthenticated)
+            // Получаем текущий URL
+            var currentUri = Navigation.Uri;
+
+            // Проверяем, нужно ли выполнять редирект
+            if (!currentUri.EndsWith("/") && !currentUri.Contains("/auth"))
             {
-                await InvokeAsync(() => Navigation.NavigateTo("/auth", true));
+                var isAuthenticated = await JSRuntime.InvokeAsync<bool>("apiHandler.isAuthenticated");
+
+                if (!isAuthenticated)
+                {
+                    _isRedirected = true; // Устанавливаем флаг, чтобы предотвратить повторный редирект
+                    Navigation.NavigateTo("/auth", true);
+                }
             }
         }
     }
+
+
 
 
 

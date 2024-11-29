@@ -1,41 +1,154 @@
-h1 {
-    text-align: left;
+/* Переопределяем стили таблицы, добавляем селектор с уникальным классом */
+* {
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+body {
+    padding: 0 20px; /* Отступы от краев body */
+}
+
+.name {
+    font-weight: 700;
+    margin-left: 15px;
+    margin-top: 15px;
     margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
 }
 
-.projects-table {
+.table {
     width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: transparent;
+    margin-bottom: 1rem;
+    overflow-x: auto; /* Добавляем горизонтальную прокрутку */
+    -webkit-overflow-scrolling: touch; /* Для плавной прокрутки на iOS */
+    margin-top: 20px; /* Отступ сверху */
+    padding: 0 20px; /* Отступы по бокам */
 }
 
-    .projects-table th, .projects-table td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
+    /* Стили для таблицы с уникальным классом */
+    .table.custom-table tbody tr {
+        border: 1px solid #e0e0e0;
+        border-radius: 15px;
+        background: linear-gradient(90deg, #0E2559 0%, #0C4D66 50.4%, #0A7774 100%);
+        margin-bottom: 10px;
+        transition: background-color 0.3s ease;
+        border-left: 2px solid #e0e0e0; /* Левое разделение */
+        border-right: 2px solid #e0e0e0; /* Правое разделение */
     }
 
-    .projects-table th {
+    .table.custom-table td {
+        padding: 12px 20px;
+        text-align: left; /* Выравнивание текста по левому краю */
+        border-bottom: 1px solid #e0e0e0; /* Разделение строк */
+    }
+
+    .table.custom-table tbody tr:hover {
         background-color: #f4f4f4;
+    }
+
+    .table.custom-table .progress-bar {
+        height: 8px;
+        background-color: #f3f3f3;
+        border-radius: 5px;
+    }
+
+    .table.custom-table .progress {
+        height: 100%;
+        background-color: #4caf50;
+        border-radius: 5px;
+    }
+
+    .table.custom-table td span {
         font-weight: bold;
+        color: #333;
     }
 
-    .projects-table td {
-        background-color: #ffffff;
-    }
-
-.progress-bar-container {
-    width: 100%;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    overflow: hidden;
-    position: relative;
-    height: 20px;
+/* Стили для скрытых подэтапов и кнопки раскрытия */
+.sub-table {
+    display: none;
+    margin-top: 20px;
 }
 
-.progress-bar {
-    height: 100%;
-    background-color: #28a745;
+    .sub-table th, .sub-table td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+.sub-stage-row.hidden {
+    display: none;
+}
+
+.btn-info {
+    background-color: #5bc0de;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+    .btn-info:hover {
+        background-color: #31b0d5;
+    }
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .table.custom-table td {
+        padding: 8px 10px;
+        font-size: 12px; /* Уменьшаем размер шрифта на мобильных */
+    }
+
+    .table.custom-table tbody tr {
+        display: block; /* Таблица превращается в блочную версию */
+        margin-bottom: 10px;
+        border: none; /* Убираем рамки между строками для мобильных */
+    }
+
+    .table.custom-table td {
+        display: block;
+        width: 100%; /* Занимаем всю ширину */
+        text-align: left; /* Выравнивание текста по левому краю */
+        position: relative;
+        border-top: 1px solid #e0e0e0; /* Добавляем верхнюю границу для каждой ячейки */
+    }
+
+        .table.custom-table td::before {
+            content: attr(data-label); /* Добавляем метки для столбцов */
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
+            color: #333;
+            background-color: transparent;
+            padding: 8px 10px;
+        }
+
+    /* Скрываем текст в шапке таблицы на мобильных */
+    .table.custom-table thead {
+        display: none;
+    }
+
+    .table.custom-table td {
+        border-bottom: 1px solid #ccc;
+    }
+
+    /* Подэтапы скрыты по умолчанию на мобильных */
+    .sub-table {
+        display: none;
+    }
+
+    /* Показываем кнопку для раскрытия подэтапов */
+    .btn-info {
+        display: inline-block;
+        margin-top: 5px;
+    }
+}
+
+/* Для экранов с шириной менее 480px */
+@media (max-width: 480px) {
+    .table.custom-table td {
+        font-size: 10px; /* Еще больше уменьшаем шрифт */
+    }
 }
