@@ -1,10 +1,17 @@
+
+
+
 /* Основной стиль */
 
 * {
     font-family: 'Montserrat', Arial, sans-serif;
 }
 
-
+body {
+    background-color: #f4f4f9;
+    margin: 10px;
+    padding: 10px;
+}
 
 .custom-container {
     margin: 20px;
@@ -39,4 +46,125 @@ select {
     }
 
 /* Список файлов */
+.files-list {
+    margin: 30px 0;
+}
 
+    .files-list h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+/* Карточки файлов */
+.file-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Стиль для карточек файлов */
+.file-card {
+    display: flex;
+    flex-direction: column; /* Располагаем содержимое по вертикали */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .file-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+.file-icon {
+    font-size: 40px;
+    color: #061C42;
+    margin-right: 15px;
+}
+
+.file-details {
+    display: flex;
+    justify-content: space-between; /* Иконка и название остаются на одной линии */
+    align-items: center;
+    flex-wrap: wrap; /* Позволяет дате перейти на следующую строку */
+}
+
+    .file-details h4 {
+        font-size: 18px;
+        margin: 0; /* Убираем отступы */
+        color: #333;
+        display: flex; /* Используем Flexbox */
+        align-items: center; /* Выравниваем элементы по вертикали */
+        gap: 10px; /* Добавляем отступ между текстом и иконкой */
+        width: 100%; /* Устанавливаем ширину в 100% для ограничения */
+    }
+
+        .file-details h4 .file-name {
+            flex: 1; /* Текст занимает всё доступное пространство */
+            overflow: hidden; /* Скрываем текст, выходящий за границы */
+            white-space: nowrap; /* Не разрешаем перенос текста на новую строку */
+            text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
+            max-width: calc(100% - 30px); /* Оставляем место для иконки скачивания */
+        }
+
+.download-icon {
+    font-size: 20px;
+    color: #0FBBB6;
+    text-decoration: none;
+    margin-left: 10px; /* Отступ от текста */
+    flex-shrink: 0; /* Иконка не сжимается */
+}
+
+    .download-icon:hover {
+        color: #008C8A;
+    }
+
+    /* Дополнительные стили для иконки */
+    .download-icon i {
+        cursor: pointer;
+    }
+
+.file-date {
+    font-size: 0.9rem;
+    color: #6c757d; /* Серый цвет */
+    margin-top: 5px;
+    width: 100%; /* Заставляем дату занимать всю ширину блока */
+    text-align: left; /* Выравниваем текст даты по левому краю */
+    word-wrap: break-word; /* Переносим длинный текст при необходимости */
+}
+
+
+
+/* Анимация для загрузки */
+.spinner {
+    margin: 50px auto;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+.chart-container {
+    background-color: #fff; /* Белый фон */
+    border-radius: 15px; /* Закругленные углы */
+    padding: 20px;
+    width: 100%; /* 90% ширины */ /* Ограничение по максимальной ширине */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Тень для визуальной разделимости */
+    height: 700px;
+}
