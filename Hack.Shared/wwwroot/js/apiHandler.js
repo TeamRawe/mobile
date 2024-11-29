@@ -441,33 +441,35 @@ window.apiHandler = {
     },
 
     async uploadFile(fileData) {
-        try {
-            const formData = new FormData();
-            // Добавляем файл
-            formData.append("file", fileData.selectedFile); // Переданный файл
-            // Добавляем другие данные (projectId, stageId)
-            formData.append("projectId", fileData.projectId);
-            formData.append("stageId", fileData.stageId || ""); // Пустое значение, если stageId не задан
+    try {
+        const formData = new FormData();
 
-            const response = await fetch(`${this.baseURL}/p/api/files/`, {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "X-CSRFToken": this.getCSRFToken() // Указываем CSRF токен для безопасности
-                },
-                credentials: "include", // Включаем куки для аутентификации
-            });
+        // Append the file to the form data
+        formData.append("file", fileData.File);
 
-            if (!response.ok) {
-                throw new Error("Ошибка загрузки файла");
-            }
+        // Append other form data (ProjectId, StageId)
+        formData.append("project", fileData.ProjectId);
+        formData.append("stage", fileData.StageId || "");
 
-            const result = await response.json(); // Предполагаем, что сервер возвращает JSON
-            console.log("Файл успешно загружен:", result.message);
-        } catch (error) {
-            console.error("Ошибка при загрузке файла:", error);
+        const response = await fetch(`${this.baseURL}/p/api/e/upload_file/`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": this.getCSRFToken() // Add CSRF token for security
+            },
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            throw new Error("Error uploading file");
         }
-    },
+
+        const result = await response.json();
+        console.log("File uploaded successfully:", result.message);
+    } catch (error) {
+        console.error("Error uploading file:", error);
+    }
+},
     async getCustomerData() {
         try {
             // Выполнение GET-запроса на ручку для получения данных
@@ -527,7 +529,31 @@ window.apiHandler = {
             console.error("Ошибка запроса getCustomerData:", error);
             return [];
         }
+    },
+
+    async ogrnSearch(ogrn) {
+    try {
+        const response = await fetch(`${this.baseURL}/c/api/gov_reg/${ogrn}`, {
+            method: "GET",
+            headers: {
+                "X-CSRFToken": this.getCSRFToken(),
+            },
+            credentials: "include"
+        });
+
+        if (response.ok) {
+                return "success";
+         }
+        else {
+            return "not_found";
+        }
+    } catch (error) {
+        console.error("Ошибка запроса:", error);
+        return "error"; 
     }
+}
+
+
 
 
 

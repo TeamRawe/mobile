@@ -249,7 +249,7 @@
         {
             var fileData = new
             {
-                FilePath = SelectedFilePath,
+                File = selectedFile,
                 ProjectId = SelectedProjectId,
                 StageId = (string?)null // Указываем StageId как null, так как он не выбран
             };
@@ -262,7 +262,7 @@
             // Если выбран этап, отправляем файл в этап
             var fileData = new
             {
-                FilePath = SelectedFilePath,
+                File = selectedFile,
                 ProjectId = SelectedProjectId,
                 StageId = SelectedStageId
             };
