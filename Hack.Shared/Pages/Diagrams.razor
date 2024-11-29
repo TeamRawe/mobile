@@ -1,0 +1,127 @@
+﻿@page "/diagram"
+@layout MainLayout
+@inject IJSRuntime JSRuntime
+<PageTitle>Диаграммы</PageTitle>
+
+<div class="custom-container">
+    <div class="header-container">
+        <h3>Диаграммы</h3>
+    </div>
+
+    <div class="selection-panel">
+        <div class="dropdown">
+            <label for="project-select">Выберите проект:</label>
+            <select id="project-select" @onchange="OnProjectChanged">
+                <option value="">-- Выберите проект --</option>
+                @foreach (var project in Projects)
+                {
+                    <option value="@project.Id">@project.Title</option>
+                }
+            </select>
+        </div>
+
+        <div class="dropdown">
+            <label for="stage-select">Выберите этап (необязательно):</label>
+            <select id="stage-select">
+                <option value="">-- Не обязательно выбрать этап --</option>
+                @foreach (var stage in Stages)
+                {
+                    <option value="@stage.Id">@stage.Title</option>
+                }
+            </select>
+        </div>
+
+        <!-- Иконки для выбора типа диаграммы -->
+        <div class="chart-icons">
+            <label for="chart-select">Выберите тип диаграммы:</label>
+            <select id="chart-select" @onchange="OnChartTypeChanged">
+                <option value=""><i class="fas fa-chart-bar"></i> -- Не обязательно выбрать этап --</option>
+                <option value="bar"><i class="fas fa-chart-bar"></i> Баровая диаграмма</option>
+                <option value="pie"><i class="fas fa-chart-pie"></i> Круговая диаграмма</option>
+                <option value="line"><i class="fas fa-chart-line"></i> Линейный график</option>
+                <option value="table"><i class="fas fa-table"></i> Таблица</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Диаграмма -->
+    <div class="chart-container">
+        @if (SelectedChartType == "bar")
+        {
+            <div id="bar-chart">Баровая диаграмма (Пример: данные для диаграммы)</div>
+        }
+        else if (SelectedChartType == "pie")
+        {
+            <div id="pie-chart">Круговая диаграмма (Пример: данные для диаграммы)</div>
+        }
+        else if (SelectedChartType == "line")
+        {
+            <div id="line-chart">Линейный график (Пример: данные для графика)</div>
+        }
+        else if (SelectedChartType == "table")
+        {
+            <div id="table-chart">Таблица (Пример: данные для таблицы)</div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Project> Projects = new();
+    private List<Stage> Stages = new();
+
+    private string? SelectedProjectId { get; set; }
+    private string? SelectedStageId { get; set; }
+
+    // Переменная для выбора типа диаграммы
+    private string SelectedChartType { get; set; } = "bar"; // по умолчанию баровая диаграмма
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Projects = await LoadProjectsAsync();
+            StateHasChanged(); // Перерисовываем компонент после загрузки данных
+        }
+    }
+
+    private async Task OnProjectChanged(ChangeEventArgs e)
+    {
+        SelectedProjectId = e.Value?.ToString();
+        SelectedStageId = null;
+        Stages = new List<Stage>();
+
+        if (!string.IsNullOrEmpty(SelectedProjectId))
+        {
+            // Загружаем этапы проекта
+            Stages = await LoadStagesAsync(SelectedProjectId);
+        }
+    }
+
+    // Обработчик изменения типа диаграммы
+    private void OnChartTypeChanged(ChangeEventArgs e)
+    {
+        SelectedChartType = e.Value?.ToString() ?? "bar"; // По умолчанию "bar", если ничего не выбрано
+    }
+
+    private async Task<List<Project>> LoadProjectsAsync()
+    {
+        return await JSRuntime.InvokeAsync<List<Project>>("apiHandler.getProjects");
+    }
+
+    private async Task<List<Stage>> LoadStagesAsync(string projectId)
+    {
+        return await JSRuntime.InvokeAsync<List<Stage>>("apiHandler.getStages", projectId);
+    }
+
+    public class Project
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+    }
+
+    public class Stage
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+    }
+}

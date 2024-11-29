@@ -2,11 +2,10 @@
 @inject IJSRuntime JSRuntime
 <PageTitle>Госкомпании</PageTitle>
 
-<h3>Госкомпании</h3>
-
-<div>
-    <button @onclick="SearchByOGRN" class="btn btn-primary" style="float: right;">
-        Поиск по реестру
+<div class="page-header">
+    <h3 class="page-title">Госкомпании</h3>
+    <button @onclick="OpenSearchModal" class="btn btn-primary search-button">
+        <span>Поиск по реестру</span> <i class="fa fa-robot"></i>
     </button>
 </div>
 
@@ -14,6 +13,10 @@
     @if (customers == null)
     {
         <p>Загрузка данных...</p>
+    }
+    else if (!customers.Any())
+    {
+        <p>Данных о компаниях нет.</p>
     }
     else
     {
@@ -29,20 +32,43 @@
     }
 </div>
 
+<!-- Modal for OGRN Search -->
+@if (IsModalVisible)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Поиск по ОГРН</h4>
+                <button @onclick="CloseSearchModal" class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" placeholder="Введите ОГРН" class="form-control" @bind="ogrnValue" />
+                <button @onclick="TriggerOgrnSearch" class="btn btn-primary mt-2">Поиск</button>
+                @if (!string.IsNullOrEmpty(SearchResultMessage))
+                {
+                    <p class="search-result-message">@SearchResultMessage</p>
+                }
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<Customer> customers;
+    private string ogrnValue;
+    private bool IsModalVisible = false;
+    private string SearchResultMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadCustomerDataFromJS();
+        await LoadCustomerData();
     }
 
-    private async Task LoadCustomerDataFromJS()
+    private async Task LoadCustomerData()
     {
         try
         {
-            var result = await JSRuntime.InvokeAsync<List<Customer>>("apiHandler.getCustomerData");
-            customers = result;
+            customers = await JSRuntime.InvokeAsync<List<Customer>>("apiHandler.getCustomerData");
         }
         catch (Exception ex)
         {
@@ -51,9 +77,50 @@
         }
     }
 
-    private void SearchByOGRN()
+    private void OpenSearchModal()
     {
-        Console.WriteLine("Поиск по ОГРН вызван."); // Для дальнейшей реализации
+        IsModalVisible = true;
+        SearchResultMessage = string.Empty;
+    }
+
+    private void CloseSearchModal()
+    {
+        IsModalVisible = false;
+    }
+
+    private async Task TriggerOgrnSearch()
+    {
+        if (string.IsNullOrWhiteSpace(ogrnValue))
+        {
+            SearchResultMessage = "Введите корректный ОГРН.";
+            return;
+        }
+
+        try
+        {
+            // Вызов JavaScript для выполнения запроса
+            var result = await JSRuntime.InvokeAsync<string>("apiHandler.ogrnSearch", ogrnValue);
+
+            // Проверка результата и обновление интерфейса
+            if (result == "success")
+            {
+                SearchResultMessage = "Компания успешно добавлена.";
+                await LoadCustomerData(); // Обновляем список компаний
+            }
+            else if (result == "not_found")
+            {
+                SearchResultMessage = "Компания не найдена.";
+            }
+            else
+            {
+                SearchResultMessage = "Ошибка при запросе к реестру.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Ошибка поиска по ОГРН: " + ex.Message);
+            SearchResultMessage = "Произошла ошибка при поиске.";
+        }
     }
 
     public class Customer

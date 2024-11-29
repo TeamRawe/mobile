@@ -1,13 +1,29 @@
+* {
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.container {
+    padding: 1rem; /* Общие отступы внутри контейнера */
+}
+
+.page-title {
+    margin-top: 20px; /* Уменьшенный отступ сверху для заголовка */
+    margin-left: 1rem;
+    margin-bottom: 1rem; /* Отступ снизу для разделения с контентом */
+    font-size: 1.8rem; /* Опционально: немного увеличить размер заголовка */
+}
+
 .contractor-cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
+    gap: 1rem; /* Расстояние между карточками */
+    padding: 1rem; /* Уменьшенный отступ внутри контейнера */
+
 }
 
 .contractor-card {
     background-color: #f9f9f9;
-    padding: 1rem;
+    padding: 0.8rem; /* Уменьшенные внутренние отступы */
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -15,9 +31,11 @@
 
     .contractor-card h5 {
         margin-top: 0;
-        font-size: 1.2rem;
+        font-size: 1.1rem; /* Чуть уменьшенный размер текста */
     }
 
     .contractor-card p {
-        margin: 0.3rem 0;
+        margin: 0.2rem 0; /* Уменьшенные отступы между строками */
+        padding-left: 0.5rem; /* Уменьшенный отступ слева для текста */
+        font-size: 0.9rem; /* Опционально: уменьшить размер текста */
     }

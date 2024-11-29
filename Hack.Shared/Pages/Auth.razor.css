@@ -47,6 +47,10 @@ input::placeholder {
     color: rgba(0, 0, 0, 0.5); /* Затемнение через прозрачность */
 }
 
+.form {
+    gap: 2px;
+}
+
 
 
 .screen-1 {
@@ -55,6 +59,7 @@ input::placeholder {
     display: flex;
     flex-direction: column;
     gap: 2em;
+
     border-radius: 30px;
     box-shadow: 0 0 2em hsl(231deg 62% 94%);
 }
@@ -71,6 +76,7 @@ input::placeholder {
         display: flex;
         flex-direction: column;
         gap: 0.5em;
+        margin-bottom: 14px;
         border-radius: 20px;
         color: hsl(0deg 0% 30%);
     }
@@ -105,6 +111,7 @@ input::placeholder {
         border-radius: 30px;
         font-weight: 600;
         cursor: pointer;
+        width: 100%;
     }
 
     .screen-1 .footer {
