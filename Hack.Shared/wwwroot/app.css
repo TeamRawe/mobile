@@ -23,7 +23,6 @@ body {
     flex-direction: column;
     align-items: stretch;
     min-height: 100vh;
-    height: 100%;
 }
 
 .btn-primary {
@@ -65,3 +64,166 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+
+/* Стили для модального окна */
+.upload-form-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* полупрозрачный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.upload-form-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .modal-header h4 {
+        margin: 0;
+        font-size: 20px;
+        color: #061C42; /* Цвет текста */
+    }
+
+.close-button {
+    background: none;
+    border: none;
+    color: #061C42;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+    .close-button:hover {
+        color: #0FBBB6; /* Цвет для кнопки при наведении */
+    }
+
+label {
+    font-size: 14px;
+    color: #061C42;
+    margin-bottom: 5px;
+    margin-top: 15px;
+}
+
+.file-input, .select-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+    .file-input:focus, .select-input:focus {
+        outline-color: #0FBBB6;
+        border-color: #0FBBB6;
+    }
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* Добавляем промежуток между кнопками */
+}
+
+.submit-button, .cancel-button {
+    background-color: #061C42; /* синий фон */
+    color: white; /* белый текст */
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none; /* Убираем рамку */
+    border-radius: 8px; /* Округлые углы */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 48%; /* Кнопки по 48% ширины */
+}
+
+    .submit-button:hover {
+        background-color: #0da7a0; /* Изменяется фон при наведении */
+    }
+
+    .submit-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.cancel-button {
+    background-color: #f0f0f0;
+    color: #061C42;
+}
+
+    .cancel-button:hover {
+        background-color: #ddd;
+    }
+
+    .cancel-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+
+
+
+
+.custom-container {
+    position: relative;
+}
+
+.header-container {
+    display: flex; /* Используем flexbox для размещения заголовка и кнопки */
+    flex-direction: row;
+    align-items: center; /* Центрируем по вертикали элементы в контейнере */
+    justify-content: space-between; /* Размещаем элементы по краям */
+    margin-bottom: 20px; /* Добавляем немного пространства снизу */
+}
+
+.upload-button-container {
+    position: relative; /* Для кнопки теперь позиционирование внутри header-container */
+}
+
+.upload-button {
+    background-color: white;
+    color: #061C42;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+    .upload-button:hover {
+        background-color: #f0f0f0;
+        transform: scale(1.05);
+    }
+
+    .upload-button i {
+        margin-left: 10px;
+        color: #0FBBB6;
+        font-size: 18px;
+    }
+
+
+
+

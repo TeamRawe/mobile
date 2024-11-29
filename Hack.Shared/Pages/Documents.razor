@@ -1,0 +1,324 @@
+﻿@page "/documents"
+@layout MainLayout
+@inject IJSRuntime JSRuntime
+<PageTitle>Договоры</PageTitle>
+
+<div class="custom-container">
+    <div class="header-container">
+        <h3>Документы</h3>
+
+        <!-- Кнопка для открытия формы загрузки -->
+        <div class="upload-button-container">
+            <button @onclick="ShowUploadForm" class="upload-button">
+                <span>Загрузить файл</span><i class="fa fa-upload"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Панель выбора проекта и этапа -->
+    <div class="selection-panel">
+        <div class="dropdown">
+            <label for="project-select">Выберите проект:</label>
+            <select id="project-select" @onchange="OnProjectChanged">
+                <option value="">-- Выберите проект --</option>
+                @foreach (var project in Projects)
+                {
+                    <option value="@project.Id">@project.Title</option>
+                }
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="stage-select">Выберите этап (необязательно):</label>
+            <select id="stage-select" @onchange="OnStageChanged">
+                <option value="">-- Не обязательно выбрать этап --</option>
+                @foreach (var stage in Stages)
+                {
+                    <option value="@stage.Id">@stage.Title</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- Список файлов -->
+    <div class="files-list">
+        <h3>Список файлов</h3>
+        <div class="file-cards">
+            @if (Files.Count == 0)
+            {
+                <p>Файлы будут отображаться здесь...</p>
+            }
+            else
+            {
+                @foreach (var file in Files)
+                {
+                    <div class="file-card">
+                        <div class="file-icon">
+                            <i class="fa fa-file"></i>
+                        </div>
+                        <div class="file-details">
+                            <h4>
+                                <span class="file-name">@file.Name</span>
+                                <a href="javascript:void(0);" @onclick="() => DownloadFile(file.Id, file.Name)" class="download-icon">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </h4>
+                            <p class="file-date">Создано: @file.CreatedAt</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для загрузки файла -->
+@if (IsUploadFormVisible)
+{
+    <div class="upload-form-modal-overlay">
+        <div class="upload-form-modal">
+            <div class="modal-header">
+                <h4>Загрузить файл</h4>
+                <button @onclick="CloseUploadForm" class="close-button">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+
+            <label for="file-upload">Выберите файл:</label>
+            <InputFile OnChange="OnFileSelected" class="file-input" />
+
+
+
+            <label for="project-select-upload">Выберите проект:</label>
+            <select id="project-select-upload" @onchange="OnProjectChangedForUpload" class="select-input">
+                <option value="">-- Выберите проект --</option>
+                @foreach (var project in Projects)
+                {
+                    <option value="@project.Id">@project.Title</option>
+                }
+            </select>
+
+            <label for="stage-select-upload">Выберите этап:</label>
+            <select id="stage-select-upload" @onchange="OnStageChangedForUpload" disabled="@IsStageDisabledForUpload" class="select-input">
+                <option value="">-- Сначала выберите проект --</option>
+                @foreach (var stage in Stages)
+                {
+                    <option value="@stage.Id">@stage.Title</option>
+                }
+            </select>
+
+            <div class="modal-buttons">
+                <button @onclick="OnSubmitUpload" disabled="@(IsSubmitDisabled)" class="submit-button">Отправить</button>
+                <button @onclick="CloseUploadForm" class="cancel-button">Отмена</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    private List<Project> Projects = new();
+    private List<Stage> Stages = new();
+    private List<File> Files = new();
+
+    private IBrowserFile selectedFile;
+
+    private string? SelectedProjectId { get; set; }
+    private string? SelectedStageId { get; set; }
+    private bool IsStageDisabled => SelectedProjectId == null;
+
+    private bool IsUploadFormVisible = false;
+    private bool IsStageDisabledForUpload => string.IsNullOrEmpty(SelectedProjectId);
+    private bool IsSubmitDisabled => string.IsNullOrEmpty(SelectedProjectId) || !isFileSelected;
+
+    private bool isFileSelected = false;
+    private string? SelectedFilePath { get; set; }
+
+    // Загружаем проекты после рендеринга компонента
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Projects = await LoadProjectsAsync();
+            StateHasChanged(); // Перерисовываем компонент после загрузки данных
+        }
+    }
+
+    // Обработчик изменения проекта
+    private async Task OnProjectChanged(ChangeEventArgs e)
+    {
+        SelectedProjectId = e.Value?.ToString();
+        SelectedStageId = null;
+        Files.Clear();
+        Stages = new List<Stage>();
+
+        if (!string.IsNullOrEmpty(SelectedProjectId))
+        {
+            // Загружаем этапы проекта
+            Stages = await LoadStagesAsync(SelectedProjectId);
+
+            // Если этап не выбран, загружаем файлы проекта
+            Files = await LoadProjectFilesAsync(SelectedProjectId);
+        }
+    }
+
+    // Обработчик изменения этапа
+    private async Task OnStageChanged(ChangeEventArgs e)
+    {
+        SelectedStageId = e.Value?.ToString();
+        Files.Clear();
+
+        if (!string.IsNullOrEmpty(SelectedStageId))
+        {
+            // Загружаем только файлы для выбранного этапа
+            Files = await LoadStageFilesAsync(SelectedStageId);
+        }
+        else
+        {
+            // Если этап не выбран, не показывать файлы этапа
+            Files.Clear();
+        }
+    }
+
+    // Открытие формы загрузки
+    private void ShowUploadForm()
+    {
+        IsUploadFormVisible = true;
+    }
+
+    // Закрытие формы загрузки
+    private void CloseUploadForm()
+    {
+        IsUploadFormVisible = false;
+    }
+
+    private async Task DownloadFile(string fileId, string fileName)
+    {
+        await JSRuntime.InvokeVoidAsync("apiHandler.downloadFile", fileId, fileName);
+    }
+
+    // Обработчик выбора файла
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var fileInput = e.File;
+        if (fileInput != null)
+        {
+            selectedFile = fileInput;
+            SelectedFilePath = fileInput.Name;
+            isFileSelected = true;  // Файл выбран, обновляем флаг
+            StateHasChanged();  // Обновляем компонент
+        }
+        else
+        {
+            isFileSelected = false;  // Если файл не выбран
+        }
+    }
+
+
+
+    // Обработчик изменения проекта для формы загрузки
+    private async Task OnProjectChangedForUpload(ChangeEventArgs e)
+    {
+        SelectedProjectId = e.Value?.ToString();
+        Stages = new List<Stage>();
+
+        if (!string.IsNullOrEmpty(SelectedProjectId))
+        {
+            // Загружаем этапы проекта
+            Stages = await LoadStagesAsync(SelectedProjectId);
+        }
+    }
+
+    // Обработчик изменения этапа для формы загрузки
+    private void OnStageChangedForUpload(ChangeEventArgs e)
+    {
+        SelectedStageId = e.Value?.ToString();
+    }
+
+    // Обработчик отправки формы загрузки
+    private async Task OnSubmitUpload()
+    {
+        if (!isFileSelected || string.IsNullOrEmpty(SelectedProjectId))
+        {
+            // Если не выбран файл или проект, ничего не отправляем
+            return;
+        }
+
+        // Если выбран только проект, отправляем его в проект
+        if (string.IsNullOrEmpty(SelectedStageId))
+        {
+            var fileData = new
+            {
+                FilePath = SelectedFilePath,
+                ProjectId = SelectedProjectId,
+                StageId = (string?)null // Указываем StageId как null, так как он не выбран
+            };
+
+            // Отправляем файл в проект
+            await UploadFileAsync(fileData);
+        }
+        else
+        {
+            // Если выбран этап, отправляем файл в этап
+            var fileData = new
+            {
+                FilePath = SelectedFilePath,
+                ProjectId = SelectedProjectId,
+                StageId = SelectedStageId
+            };
+
+            // Отправляем файл в этап проекта
+            await UploadFileAsync(fileData);
+        }
+
+        // Закрываем форму после отправки
+        CloseUploadForm();
+    }
+
+    private async Task UploadFileAsync(object file)
+    {
+        // Ваш код для загрузки файла через API
+        await JSRuntime.InvokeVoidAsync("apiHandler.uploadFile", file);
+    }
+
+    // Методы для работы с JavaScript
+    private async Task<List<Project>> LoadProjectsAsync()
+    {
+        return await JSRuntime.InvokeAsync<List<Project>>("apiHandler.getProjects");
+    }
+
+    private async Task<List<Stage>> LoadStagesAsync(string projectId)
+    {
+        return await JSRuntime.InvokeAsync<List<Stage>>("apiHandler.getStages", projectId);
+    }
+
+    private async Task<List<File>> LoadProjectFilesAsync(string projectId)
+    {
+        return await JSRuntime.InvokeAsync<List<File>>("apiHandler.getProjectFiles", projectId);
+    }
+
+    private async Task<List<File>> LoadStageFilesAsync(string stageId)
+    {
+        return await JSRuntime.InvokeAsync<List<File>>("apiHandler.getStageFiles", stageId);
+    }
+
+    // Классы для отображения проектов, этапов и файлов
+    public class Project
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+    }
+
+    public class Stage
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+    }
+
+    public class File
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string CreatedAt { get; set; }
+    }
+}

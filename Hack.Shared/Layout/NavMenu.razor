@@ -1,20 +1,25 @@
-﻿
+﻿@inject NavigationManager NavigationManager
+@inject StateContainer StateContainer
+@inject IJSRuntime JSRuntime
+
+@using Hack.Shared.Pages
+<meta charset="UTF-8">
+
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 
-<div class="navmenu">
-   
 
     <!-- Navbar -->
     <header class="navbar">
-        <span class="navbar-brand">ИСВС</span>
+        <a class="brand-nav" href="/home">
+            <span class="navbar-brand">ИСВС</span>
+        </a>
         <div class="navbar-profile">
-            <span class="profile-name">Баженов Владимир Дмитриевич</span>
-            <a href="/profile" class="profile-link">
+            <span class="profile-name">@LastName @FirstName @MiddleName</span>
+            <button id="icon-button" class="profile-link" @onclick="ToggleProfileDropdown">
                 <svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <title>profile_round [#1342]</title>
-                    <desc>Created with Sketch.</desc>
+                    <title>profile_round</title>
                     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#061C42">
                             <g id="icons" transform="translate(56.000000, 160.000000)">
@@ -23,53 +28,187 @@
                         </g>
                     </g>
                 </svg>
-            </a>
+            </button>
+
+            @if (showDropdown)
+            {
+                <div class="profile-dropdown" @onclick="CloseDropdown">
+                    <div class="profile-dropdown-content" @onclick:stopPropagation>
+                        <p><strong>Фамилия:</strong> @LastName</p>
+                        <p><strong>Имя:</strong> @FirstName</p>
+                        <p><strong>Отчество:</strong> @MiddleName</p>
+                        <p><strong>Телефон:</strong> @Phone</p>
+                        <p><strong>Почта:</strong> @Email</p>
+                        <button class="Logout-button" @onclick="OnLogoutClicked">Выйти</button>
+                    </div>
+                </div>
+            }
         </div>
     </header>
+
+
+
+<div class="navmenu">
 
     <!-- Sidebar -->
     <div class="nav-scrollable">
         <h3 class="menu-title">МЕНЮ</h3>
         <hr class="menu-divider" />
-        <nav class="flex-column">
+        <nav class="nav-container">
             <div class="nav-item">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
+                <NavLink class="nav-link" href="projects" Match="NavLinkMatch.All">
                     <span class="nav-text">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Проекты
+                        <span class="project-icon" aria-hidden="true"></span> Проекты
                     </span>
                 </NavLink>
             </div>
 
             <div class="nav-item">
-                <NavLink class="nav-link" href="counter">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
-                    <span class="nav-text">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Договоры
-                    </span>
+                <NavLink class="nav-link" href="documents">
+                    <span class="documents-icon" aria-hidden="true"></span>
+                    <span class="nav-text">Договоры</span>
                 </NavLink>
             </div>
 
             <div class="nav-item">
                 <NavLink class="nav-link" href="weather">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
+                    <span class="report-icon" aria-hidden="true"></span>
+                    <span class="nav-text">Отчеты</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item">
+                <NavLink class="nav-link" href="diagram">
                     <span class="nav-text">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Отчеты
+                        <span class="diagram-icon" aria-hidden="true"></span> Диаграммы
                     </span>
                 </NavLink>
             </div>
 
             <div class="nav-item">
-                <NavLink class="nav-link" href="weather">
-                    <div id="nav-content-highlight"></div> <!-- Подсветка -->
+                <NavLink class="nav-link" href="customers">
                     <span class="nav-text">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Помощь
+                        <span class="customers-icon" aria-hidden="true"></span> Заказчики
                     </span>
                 </NavLink>
             </div>
+
+            <div class="nav-item">
+                <NavLink class="nav-link" href="contractors">
+                    <span class="nav-text">
+                        <span class="contractors-icon" aria-hidden="true"></span> Подрядчики
+                    </span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item">
+                <NavLink class="nav-link" href="help">
+                    <span class="nav-text">
+                        <span class="help-icon" aria-hidden="true"></span> Помощь
+                    </span>
+                </NavLink>
+            </div>
+
+
 
         </nav>
 
     </div>
 
 </div>
+
+@code {
+    private bool showDropdown = false;
+    private string FirstName = "";
+    private string LastName = "";
+    private string MiddleName = "";
+    private string Phone = "Телефон";
+    private string Email = "Email";
+
+    private string UserId;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) // Этот блок будет выполняться только один раз при первом рендере компонента
+        {
+            // Получаем UserId из LocalStorage
+            await StateContainer.LoadUserIdAsync();
+            UserId = StateContainer.UserId; // Теперь UserId доступен
+
+            // Если UserId доступен, получаем данные пользователя
+            if (!string.IsNullOrEmpty(UserId))
+            {
+                try
+                {
+                    var userData = await JSRuntime.InvokeAsync<UserData>("apiHandler.getUserData", UserId);
+
+                    // Если данные получены, обновляем локальные переменные
+                    if (userData != null)
+                    {
+                        FirstName = userData.FirstName;
+                        LastName = userData.LastName;
+                        MiddleName = userData.FatherName;
+                        Phone = userData.Phone;
+                        Email = userData.Email;
+
+                        StateHasChanged(); // Обновляем интерфейс
+                    }
+                    else
+                    {
+                        Console.WriteLine("User data is null.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error fetching user data: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("UserId is not available.");
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+
+    // Функция для переключения состояния окна (открытие/закрытие)
+    private void ToggleProfileDropdown()
+    {
+        showDropdown = !showDropdown;
+    }
+
+    // Закрытие выпадающего окна при клике вне окна
+    private void CloseDropdown(MouseEventArgs e)
+    {
+        showDropdown = false;
+    }
+
+    private async Task OnLogoutClicked()
+    {
+        // Вызов метода logout через JSRuntime
+        var result = await JSRuntime.InvokeAsync<bool>("apiHandler.logout");
+
+        if (result)
+        {
+            // Если выход успешен, перенаправляем на страницу входа или другую страницу
+            NavigationManager.NavigateTo("/auth");
+        }
+        else
+        {
+            // Если произошла ошибка, отображаем сообщение
+            Console.Error.WriteLine("Ошибка при выходе!");
+        }
+    }
+
+    public class UserData
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FatherName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+    }
+    UserData userData = new UserData();
+}

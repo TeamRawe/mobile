@@ -2,26 +2,36 @@
 
 * {
     font-family: 'Montserrat', Arial, sans-serif;
+    
 }
 
 
 .navbar {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     background: #FFFFFF;
     height: 110px;
-    z-index: 1000; 
+    z-index: 3; 
     display: flex;
     align-items: center;
 }
+.brand-nav {
+    text-decoration: none;
+    color: inherit;
+}
+    .brand-nav:hover,
+    .brand-nav:focus {
+        text-decoration: none;
+        color: inherit; 
+    }
 
 .navbar-brand {
     font-size: 70px;
     font-weight: 700;
     color: #061C42;
-    margin-left: 20px;
+    margin-left: 51px;
     text-decoration: none;
     letter-spacing: 0;
     width: 234px;
@@ -44,14 +54,7 @@
     padding: 0;
 }
 
-.nav-item {
-    margin-left: 15px;
-    display: flex;
-}
 
-    .nav-item.profile {
-        margin-left: auto;
-    }
 
 .profile-img {
     width: 40px;
@@ -78,18 +81,123 @@
 .navmenu {
     display: flex;
     margin-top: 120px; 
-    height: calc(100vh - 120px); 
+    height: 600px;
 }
 
 /* Sidebar */
 .nav-scrollable {
-    width: 250px;
-    background-color: #E5EEF6;
-    border-right: 1px solid #ddd;
-    flex-shrink: 0;
-    border-radius: 40px;
-    margin-left: 10px;
+    width: 300px;
+    background-color: #FFFFFF;
+    height: 600px;
+    margin-left: 51px;
+    z-index: 1;
 }
+
+
+
+.nav-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 3px;
+}
+
+.nav-item {
+    position: relative;
+    display: inline-block;
+    border-radius: 150px;
+    background: white; 
+    padding: 10px 20px;
+    z-index: 1;
+    transition: all 0.3s ease; 
+}
+
+    /* Псевдоэлемент для градиентной рамки */
+    .nav-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 150px;
+        padding: 2px; /* Толщина градиента */
+        background: linear-gradient(90deg, #0E2559 0%, #1E4FBF 100%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        z-index: -1;
+    }
+    .nav-item:hover {
+        background-color: rgb(229, 238, 246); /* Цвет фона при наведении */
+    }
+        .nav-item:hover .nav-text {
+            color: #0ABAB5;
+        }
+        .nav-item:hover .project-icon {
+            background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 47 47%22 fill%3D%22none%22%3E%3Cpath d%3D%22M31.6365 15.3614C42.6249 26.3498 47.885 38.898 43.3893 43.3937C38.8984 47.887 26.3454 42.6245 15.3594 31.6385C4.37342 20.6526 -0.889057 8.10193 3.60662 3.60625C8.09752 -0.887035 20.6482 4.37544 31.6365 15.3614Z%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M22.9007 23.5H24.0951M15.3618 15.3614C4.37338 26.3498 -0.889091 38.8981 3.60659 43.3937C8.10226 47.8894 20.6505 42.6245 31.6365 31.6386C42.6225 20.6526 47.8873 8.10195 43.3917 3.60627C38.896 -0.889411 26.3477 4.37545 15.3618 15.3614Z%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+            background-size: contain;
+        }
+        .nav-item:hover .documents-icon {
+            background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 43 54%22 fill%3D%22none%22%3E%3Cpath d%3D%22M2.00242 49.9167C2.00242 51.0667 2.93576 52 4.08576 52H33.6746C36.9052 52 38.1135 50.9861 38.1135 47.5556V43.5417M2.00242 49.9167C2.00242 48.2591 2.6609 46.6694 3.83301 45.4972C5.00511 44.3251 6.59482 43.6667 8.25242 43.6667H36.4524C37.0802 43.6667 37.6339 43.625 38.1135 43.5417M2.00242 49.9167V10.8889C2.00242 7.73333 1.80242 4.25278 5.03576 2.60556C6.22465 2 7.7802 2 10.8913 2H36.4469C39.8802 2 40.8913 3.21389 40.8913 6.44444V39.2222C40.8913 41.9861 40.108 43.1806 38.1135 43.5417%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M14.7802 22.3418L18.6108 26.7169C18.6934 26.8097 18.7957 26.8829 18.9102 26.931C19.0247 26.9792 19.1486 27.0012 19.2727 26.9953C19.3968 26.9894 19.518 26.9559 19.6274 26.8972C19.7369 26.8384 19.8318 26.756 19.9053 26.6558L27.6833 15.8889%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+        }
+        .nav-item:hover .report-icon {
+            background: url('data:image/svg+xml,%3Csvg width%3D%2241%22 height%3D%2254%22 viewBox%3D%220 0 41 54%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M14.273 2H8.16667C6.53117 2 4.96265 2.65848 3.80618 3.83058C2.6497 5.00268 2 6.5924 2 8.25V45.75C2 47.4076 2.6497 48.9973 3.80618 50.1694C4.96265 51.3415 6.53117 52 8.16667 52H32.8333C34.4688 52 36.0374 51.3415 37.1938 50.1694C38.3503 48.9973 39 47.4076 39 45.75V27M14.273 2C17.6798 2 20.5 4.79722 20.5 8.25V14.5C20.5 16.1576 21.1497 17.7473 22.3062 18.9194C23.4626 20.0915 25.0312 20.75 26.6667 20.75H32.8333C34.4688 20.75 36.0374 21.4085 37.1938 22.5806C38.3503 23.7527 39 25.3424 39 27M14.273 2C24.3864 2 39 16.8889 39 27M12.963 39.5H29.4074M12.963 31.1667H23.9259%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+            background-size: contain;
+        }
+        .nav-item:hover .diagram-icon {
+            background: url('data:image/svg+xml,%3Csvg width%3D%2264%22 height%3D%2264%22 viewBox%3D%220 0 24 24%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M2.75 2C2.75 1.58579 2.41421 1.25 2 1.25C1.58579 1.25 1.25 1.58579 1.25 2V12.0574C1.24999 14.3658 1.24998 16.1748 1.43975 17.5863C1.63399 19.031 2.03933 20.1711 2.93414 21.0659C3.82895 21.9607 4.96897 22.366 6.41371 22.5603C7.82519 22.75 9.63423 22.75 11.9426 22.75H22C22.4142 22.75 22.75 22.4142 22.75 22C22.75 21.5858 22.4142 21.25 22 21.25H12C9.62178 21.25 7.91356 21.2484 6.61358 21.0736C5.33517 20.9018 4.56445 20.5749 3.9948 20.0052C3.42514 19.4355 3.09825 18.6648 2.92637 17.3864C2.75159 16.0864 2.75 14.3782 2.75 12V2Z%22 fill%3D%22%230ABAB5%22%3E%3C/path%3E%3Cpath d%3D%22M19.5875 7.46641C19.8451 7.14204 19.791 6.67026 19.4666 6.41267C19.1422 6.15508 18.6704 6.20921 18.4128 6.53359L15.2948 10.46C15.0496 10.7688 14.8887 10.9708 14.7561 11.1162C14.6265 11.2585 14.5657 11.2989 14.538 11.3137C14.3272 11.4264 14.0754 11.4319 13.8599 11.3285C13.8316 11.3149 13.7691 11.2772 13.6333 11.1407C13.4946 11.0011 13.3251 10.8063 13.0666 10.5085L13.0505 10.4899C12.8126 10.2157 12.6098 9.98188 12.4308 9.80184C12.2448 9.6147 12.0414 9.4401 11.7894 9.31918C11.143 9.00898 10.3875 9.02541 9.75518 9.36342C9.50872 9.49518 9.31307 9.67845 9.13536 9.87351C8.96441 10.0612 8.77192 10.3036 8.54619 10.5878L5.41267 14.5336C5.15508 14.8579 5.20921 15.3297 5.53358 15.5873C5.85795 15.8449 6.32973 15.7908 6.58733 15.4664L9.70551 11.54C9.95077 11.2311 10.1116 11.0292 10.2442 10.8837C10.3738 10.7414 10.4347 10.7011 10.4623 10.6863C10.6731 10.5736 10.925 10.5681 11.1404 10.6715C11.1687 10.6851 11.2313 10.7228 11.367 10.8593C11.5057 10.9989 11.6752 11.1936 11.9337 11.4915L11.9498 11.5101C12.1877 11.7843 12.3906 12.0181 12.5695 12.1981C12.7555 12.3853 12.9589 12.5599 13.2109 12.6808C13.8573 12.991 14.6129 12.9746 15.2452 12.6365C15.4916 12.5048 15.6873 12.3215 15.865 12.1264C16.0359 11.9388 16.2284 11.6964 16.4541 11.4122L19.5875 7.46641Z%22 fill%3D%22%230ABAB5%22%3E%3C/path%3E%3C/svg%3E') no-repeat center;
+            background-size: contain;
+        }
+        .nav-item:hover .help-icon {
+            background: url('data:image/svg+xml,%3Csvg width%3D%2249%22 height%3D%2249%22 viewBox%3D%220 0 49 49%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M47 24.5C47 27.4547 46.418 30.3806 45.2873 33.1104C44.1566 35.8402 42.4992 38.3206 40.4099 40.4099C38.3206 42.4992 35.8402 44.1566 33.1104 45.2873C30.3806 46.418 27.4547 47 24.5 47C21.5453 47 18.6194 46.418 15.8896 45.2873C13.1598 44.1566 10.6794 42.4992 8.5901 40.4099C6.50078 38.3206 4.84344 35.8402 3.71271 33.1104C2.58198 30.3806 2 27.4547 2 24.5C2 18.5326 4.37053 12.8097 8.5901 8.5901C12.8097 4.37053 18.5326 2 24.5 2C30.4674 2 36.1903 4.37053 40.4099 8.5901C44.6295 12.8097 47 18.5326 47 24.5Z%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M24.5001 28.24C24.5001 23.2325 29.5001 24.4825 29.5001 19.475C29.5001 12.8275 19.5001 12.8275 19.5001 19.475M24.5001 34.4925V33.2425%22 stroke%3D%22%230ABAB5%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+            background-size: contain;
+        }
+        .nav-item:hover .customers-icon {
+            background: url('data:image/svg+xml,%3Csvg fill%3D%22%230FBBB6%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%2264%22 height%3D%2264%22 viewBox%3D%220 0 100 100%22 enable-background%3D%22new 0 0 100 100%22 xml:space%3D%22preserve%22%3E%3Cg id%3D%22SVGRepo_bgCarrier%22 stroke-width%3D%220%22%3E%3C/g%3E%3Cg id%3D%22SVGRepo_tracerCarrier%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22%3E%3C/g%3E%3Cg id%3D%22SVGRepo_iconCarrier%22%3E%3Cellipse cx%3D%2241.3%22 cy%3D%2242.3%22 rx%3D%2212.2%22 ry%3D%2213.5%22 fill%3D%22%230FBBB6%22%3E%3C/ellipse%3E%3Cpath d%3D%22M52.6,57.4c-3.1,2.8-7,4.5-11.3,4.5c-4.3,0-8.3-1.7-11.3-4.6c-5.5,2.5-11,5.7-11,10.7v2.1 c0,2.5,2,4.5,4.5,4.5h35.7c2.5,0,4.5-2,4.5-4.5v-2.1C63.6,63,58.2,59.9,52.6,57.4z%22 fill%3D%22%230FBBB6%22%3E%3C/path%3E%3Cpath d%3D%22M68,47.4c-0.2-0.1-0.3-0.2-0.5-0.3c-0.4-0.2-0.9-0.2-1.3,0.1c-2.1,1.3-4.6,2.1-7.2,2.1c-0.3,0-0.7,0-1,0 c-0.5,1.3-1,2.6-1.7,3.7c0.4,0.2,0.9,0.3,1.4,0.6c5.7,2.5,9.7,5.6,12.5,9.8H75c2.2,0,4-1.8,4-4v-1.9C79,52.6,73.3,49.6,68,47.4z%22 fill%3D%22%230FBBB6%22%3E%3C/path%3E%3Cpath d%3D%22M66.9,34.2c0-4.9-3.6-8.9-7.9-8.9c-2.2,0-4.1,1-5.6,2.5c3.5,3.6,5.7,8.7,5.7,14.4c0,0.3,0,0.5,0,0.8 C63.4,43,66.9,39.1,66.9,34.2z%22 fill%3D%22%230FBBB6%22%3E%3C/path%3E%3C/g%3E%3C/svg%3E') no-repeat center;
+            background-size: contain;
+        }
+        .nav-item:hover .contractors-icon {
+            background: url('data:image/svg+xml,%3Csvg%20fill%3D%22none%22%20viewBox%3D%220%200%20128%20128%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3ClinearGradient%20id%3D%22paint0_linear_12_952%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%2264%22%20x2%3D%2264%22%20y1%3D%2214%22%20y2%3D%22114%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%230FBBB6%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230FBBB6%22/%3E%3C/linearGradient%3E%3Cg%20fill%3D%22url%28%23paint0_linear_12_952%29%22%3E%3Cpath%20d%3D%22m69.25%2038c.9665%200%201.75-.7675%201.75-1.7143v-15.4286c0-3.7612-3.2097-6.8571-7-6.8571-3.866%200-7%203.07-7%206.8571v15.4286c0%20.9468.7835%201.7143%201.75%201.7143z%22/%3E%3Cpath%20d%3D%22m36%2057c-2.2091%200-4-1.7909-4-4s1.7909-4%204-4h56c2.2091%200%204%201.7909%204%204s-1.7909%204-4%204z%22/%3E%3Cpath%20d%3D%22m75%2036.2857c0%203.2333-2.6525%205.7143-5.75%205.7143h-10.5c-3.0975%200-5.75-2.481-5.75-5.7143v-15.4286c0-.535.0388-1.06.1137-1.5726-9.4898%204.186-16.1137%2013.6772-16.1137%2024.7155v1h54v-1c0-11.0383-6.6239-20.5295-16.1137-24.7155.0749.5126.1137%201.0376.1137%201.5726z%22/%3E%3Cpath%20d%3D%22m41%2065v-4h46v4c0%207.644-3.729%2014.417-9.467%2018.5992-3.7973%202.7678-8.4744%204.4008-13.533%204.4008s-9.7357-1.6331-13.533-4.4008c-5.738-4.1822-9.467-10.9552-9.467-18.5992z%22/%3E%3Cpath%20d%3D%22m80.9773%2085.9957c2.1011-1.701%203.9417-3.7111%205.4528-5.9611%201.9111%202.0923%203.7735.3706%205.5699.8159v33.1495h-56v-33.1495c1.7964-.4453%203.6588-.7231%205.5699-.8159%201.5111%202.25%203.3517%204.2601%205.4528%205.9611%202.4698%206.9934%209.1384%2012.0043%2016.9773%2012.0043s14.5075-5.0109%2016.9773-12.0043z%22/%3E%3Cpath%20d%3D%22m64%2092c-3.345%200-6.5479-.6083-9.5041-1.7202%202.4963%202.3091%205.8354%203.7202%209.5041%203.7202s7.0078-1.4111%209.5041-3.7202c-2.9562%201.1119-6.1591%201.7202-9.5041%201.7202z%22/%3E%3Cpath%20d%3D%22m112.381%20114h-16.381v-31.8411c1.3908.5705%202.7274%201.2461%204%202.0167%208.392%205.0815%2014%2014.298%2014%2024.8244v3.381c0%20.877-.742%201.619-1.619%201.619z%22/%3E%3Cpath%20d%3D%22m32%20114h-16.381c-.8941%200-1.619-.725-1.619-1.619v-3.381c0-10.4828%205.562-19.6665%2013.8959-24.761l.1041-.0633c1.2726-.7706%202.6092-1.4461%204-2.0167z%22/%3E%3C/g%3E%3C/svg%3E') no-repeat center center;
+            background-size: contain;
+        }
+
+
+
+
+
+@media (max-width: 768px) {
+    .navbar {
+        height: 80px;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .navbar-profile {
+        margin-top: 10px;
+    }
+
+    .navmenu {
+        margin-top: 0;
+        flex-direction: column;
+    }
+
+    .nav-item {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .navbar-brand {
+        font-size: 40px;
+    }
+
+    .navmenu .nav-scrollable {
+        display: none;
+    }
+    .navmenu .navbar .profile-name {
+        display: none;
+    }
+}
+
 
 /* Основной контент */
 body {
@@ -112,28 +220,154 @@ body {
 .menu-title {
     font-size: 35px;
     font-weight: 500;
-    color: #061C42;
-    padding-top: 10px;
-    text-align: center;
+    color: #FFFFFF;
+    background: #0FBBB6;
+    border-radius: 15px;
+    height: 55px;
+    width: 241px;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     margin: 0;
 }
 
 /* Разделительная линия */
 .menu-divider {
     border: none;
-    border-top: 6px solid #fff; 
-    margin: 10px -20px; 
-}
-
-
-.hr {
+    border-top: 30px solid #fff;
+    margin: 0;
     opacity: 1;
 }
+
+.nav-text {
+    font-size: 20px;
+    font-weight: 400;
+    color: #061C42;
+}
+
+.project-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 47 47%22 fill%3D%22none%22%3E%3Cpath d%3D%22M31.6365 15.3614C42.6249 26.3498 47.885 38.898 43.3893 43.3937C38.8984 47.887 26.3454 42.6245 15.3594 31.6385C4.37342 20.6526 -0.889057 8.10193 3.60662 3.60625C8.09752 -0.887035 20.6482 4.37544 31.6365 15.3614Z%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M22.9007 23.5H24.0951M15.3618 15.3614C4.37338 26.3498 -0.889091 38.8981 3.60659 43.3937C8.10226 47.8894 20.6505 42.6245 31.6365 31.6386C42.6225 20.6526 47.8873 8.10195 43.3917 3.60627C38.896 -0.889411 26.3477 4.37545 15.3618 15.3614Z%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+    transition: background 0.3s ease; 
+}
+
+
+.documents-icon {
+    display: inline-block; 
+    width: 23px; 
+    height: 23px; 
+    background: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 43 54%22 fill%3D%22none%22%3E%3Cpath d%3D%22M2.00242 49.9167C2.00242 51.0667 2.93576 52 4.08576 52H33.6746C36.9052 52 38.1135 50.9861 38.1135 47.5556V43.5417M2.00242 49.9167C2.00242 48.2591 2.6609 46.6694 3.83301 45.4972C5.00511 44.3251 6.59482 43.6667 8.25242 43.6667H36.4524C37.0802 43.6667 37.6339 43.625 38.1135 43.5417M2.00242 49.9167V10.8889C2.00242 7.73333 1.80242 4.25278 5.03576 2.60556C6.22465 2 7.7802 2 10.8913 2H36.4469C39.8802 2 40.8913 3.21389 40.8913 6.44444V39.2222C40.8913 41.9861 40.108 43.1806 38.1135 43.5417%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M14.7802 22.3418L18.6108 26.7169C18.6934 26.8097 18.7957 26.8829 18.9102 26.931C19.0247 26.9792 19.1486 27.0012 19.2727 26.9953C19.3968 26.9894 19.518 26.9559 19.6274 26.8972C19.7369 26.8384 19.8318 26.756 19.9053 26.6558L27.6833 15.8889%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain; 
+    vertical-align: middle; 
+}
+
+.report-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg width%3D%2241%22 height%3D%2254%22 viewBox%3D%220 0 41 54%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M14.273 2H8.16667C6.53117 2 4.96265 2.65848 3.80618 3.83058C2.6497 5.00268 2 6.5924 2 8.25V45.75C2 47.4076 2.6497 48.9973 3.80618 50.1694C4.96265 51.3415 6.53117 52 8.16667 52H32.8333C34.4688 52 36.0374 51.3415 37.1938 50.1694C38.3503 48.9973 39 47.4076 39 45.75V27M14.273 2C17.6798 2 20.5 4.79722 20.5 8.25V14.5C20.5 16.1576 21.1497 17.7473 22.3062 18.9194C23.4626 20.0915 25.0312 20.75 26.6667 20.75H32.8333C34.4688 20.75 36.0374 21.4085 37.1938 22.5806C38.3503 23.7527 39 25.3424 39 27M14.273 2C24.3864 2 39 16.8889 39 27M12.963 39.5H29.4074M12.963 31.1667H23.9259%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+}
+
+.help-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg width%3D%2249%22 height%3D%2249%22 viewBox%3D%220 0 49 49%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M47 24.5C47 27.4547 46.418 30.3806 45.2873 33.1104C44.1566 35.8402 42.4992 38.3206 40.4099 40.4099C38.3206 42.4992 35.8402 44.1566 33.1104 45.2873C30.3806 46.418 27.4547 47 24.5 47C21.5453 47 18.6194 46.418 15.8896 45.2873C13.1598 44.1566 10.6794 42.4992 8.5901 40.4099C6.50078 38.3206 4.84344 35.8402 3.71271 33.1104C2.58198 30.3806 2 27.4547 2 24.5C2 18.5326 4.37053 12.8097 8.5901 8.5901C12.8097 4.37053 18.5326 2 24.5 2C30.4674 2 36.1903 4.37053 40.4099 8.5901C44.6295 12.8097 47 18.5326 47 24.5Z%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3Cpath d%3D%22M24.5001 28.24C24.5001 23.2325 29.5001 24.4825 29.5001 19.475C29.5001 12.8275 19.5001 12.8275 19.5001 19.475M24.5001 34.4925V33.2425%22 stroke%3D%22%230E2559%22 stroke-width%3D%223%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+}
+.diagram-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg width%3D%2264%22 height%3D%2264%22 viewBox%3D%220 0 24 24%22 fill%3D%22none%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M2.75 2C2.75 1.58579 2.41421 1.25 2 1.25C1.58579 1.25 1.25 1.58579 1.25 2V12.0574C1.24999 14.3658 1.24998 16.1748 1.43975 17.5863C1.63399 19.031 2.03933 20.1711 2.93414 21.0659C3.82895 21.9607 4.96897 22.366 6.41371 22.5603C7.82519 22.75 9.63423 22.75 11.9426 22.75H22C22.4142 22.75 22.75 22.4142 22.75 22C22.75 21.5858 22.4142 21.25 22 21.25H12C9.62178 21.25 7.91356 21.2484 6.61358 21.0736C5.33517 20.9018 4.56445 20.5749 3.9948 20.0052C3.42514 19.4355 3.09825 18.6648 2.92637 17.3864C2.75159 16.0864 2.75 14.3782 2.75 12V2Z%22 fill%3D%22%231C274C%22%3E%3C/path%3E%3Cpath d%3D%22M19.5875 7.46641C19.8451 7.14204 19.791 6.67026 19.4666 6.41267C19.1422 6.15508 18.6704 6.20921 18.4128 6.53359L15.2948 10.46C15.0496 10.7688 14.8887 10.9708 14.7561 11.1162C14.6265 11.2585 14.5657 11.2989 14.538 11.3137C14.3272 11.4264 14.0754 11.4319 13.8599 11.3285C13.8316 11.3149 13.7691 11.2772 13.6333 11.1407C13.4946 11.0011 13.3251 10.8063 13.0666 10.5085L13.0505 10.4899C12.8126 10.2157 12.6098 9.98188 12.4308 9.80184C12.2448 9.6147 12.0414 9.4401 11.7894 9.31918C11.143 9.00898 10.3875 9.02541 9.75518 9.36342C9.50872 9.49518 9.31307 9.67845 9.13536 9.87351C8.96441 10.0612 8.77192 10.3036 8.54619 10.5878L5.41267 14.5336C5.15508 14.8579 5.20921 15.3297 5.53358 15.5873C5.85795 15.8449 6.32973 15.7908 6.58733 15.4664L9.70551 11.54C9.95077 11.2311 10.1116 11.0292 10.2442 10.8837C10.3738 10.7414 10.4347 10.7011 10.4623 10.6863C10.6731 10.5736 10.925 10.5681 11.1404 10.6715C11.1687 10.6851 11.2313 10.7228 11.367 10.8593C11.5057 10.9989 11.6752 11.1936 11.9337 11.4915L11.9498 11.5101C12.1877 11.7843 12.3906 12.0181 12.5695 12.1981C12.7555 12.3853 12.9589 12.5599 13.2109 12.6808C13.8573 12.991 14.6129 12.9746 15.2452 12.6365C15.4916 12.5048 15.6873 12.3215 15.865 12.1264C16.0359 11.9388 16.2284 11.6964 16.4541 11.4122L19.5875 7.46641Z%22 fill%3D%22%231C274C%22%3E%3C/path%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+}
+.customers-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg fill%3D%22%23061C42%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%2264%22 height%3D%2264%22 viewBox%3D%220 0 100 100%22 enable-background%3D%22new 0 0 100 100%22 xml:space%3D%22preserve%22%3E%3Cg id%3D%22SVGRepo_bgCarrier%22 stroke-width%3D%220%22%3E%3C/g%3E%3Cg id%3D%22SVGRepo_tracerCarrier%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22%3E%3C/g%3E%3Cg id%3D%22SVGRepo_iconCarrier%22%3E%3Cellipse cx%3D%2241.3%22 cy%3D%2242.3%22 rx%3D%2212.2%22 ry%3D%2213.5%22%3E%3C/ellipse%3E%3Cpath d%3D%22M52.6,57.4c-3.1,2.8-7,4.5-11.3,4.5c-4.3,0-8.3-1.7-11.3-4.6c-5.5,2.5-11,5.7-11,10.7v2.1 c0,2.5,2,4.5,4.5,4.5h35.7c2.5,0,4.5-2,4.5-4.5v-2.1C63.6,63,58.2,59.9,52.6,57.4z%22%3E%3C/path%3E%3Cpath d%3D%22M68,47.4c-0.2-0.1-0.3-0.2-0.5-0.3c-0.4-0.2-0.9-0.2-1.3,0.1c-2.1,1.3-4.6,2.1-7.2,2.1c-0.3,0-0.7,0-1,0 c-0.5,1.3-1,2.6-1.7,3.7c0.4,0.2,0.9,0.3,1.4,0.6c5.7,2.5,9.7,5.6,12.5,9.8H75c2.2,0,4-1.8,4-4v-1.9C79,52.6,73.3,49.6,68,47.4z%22%3E%3C/path%3E%3Cpath d%3D%22M66.9,34.2c0-4.9-3.6-8.9-7.9-8.9c-2.2,0-4.1,1-5.6,2.5c3.5,3.6,5.7,8.7,5.7,14.4c0,0.3,0,0.5,0,0.8 C63.4,43,66.9,39.1,66.9,34.2z%22%3E%3C/path%3E%3C/g%3E%3C/svg%3E') no-repeat center;
+    background-size: contain;
+    vertical-align: middle;
+}
+.contractors-icon {
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    background: url('data:image/svg+xml,%3Csvg%20fill%3D%22none%22%20viewBox%3D%220%200%20128%20128%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%3ClinearGradient%20id%3D%22paint0_linear_12_952%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%2264%22%20x2%3D%2264%22%20y1%3D%2214%22%20y2%3D%22114%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23061C42%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23061C42%22/%3E%3C/linearGradient%3E%3Cg%20fill%3D%22url%28%23paint0_linear_12_952%29%22%3E%3Cpath%20d%3D%22m69.25%2038c.9665%200%201.75-.7675%201.75-1.7143v-15.4286c0-3.7612-3.2097-6.8571-7-6.8571-3.866%200-7%203.07-7%206.8571v15.4286c0%20.9468.7835%201.7143%201.75%201.7143z%22/%3E%3Cpath%20d%3D%22m36%2057c-2.2091%200-4-1.7909-4-4s1.7909-4%204-4h56c2.2091%200%204%201.7909%204%204s-1.7909%204-4%204z%22/%3E%3Cpath%20d%3D%22m75%2036.2857c0%203.2333-2.6525%205.7143-5.75%205.7143h-10.5c-3.0975%200-5.75-2.481-5.75-5.7143v-15.4286c0-.535.0388-1.06.1137-1.5726-9.4898%204.186-16.1137%2013.6772-16.1137%2024.7155v1h54v-1c0-11.0383-6.6239-20.5295-16.1137-24.7155.0749.5126.1137%201.0376.1137%201.5726z%22/%3E%3Cpath%20d%3D%22m41%2065v-4h46v4c0%207.644-3.729%2014.417-9.467%2018.5992-3.7973%202.7678-8.4744%204.4008-13.533%204.4008s-9.7357-1.6331-13.533-4.4008c-5.738-4.1822-9.467-10.9552-9.467-18.5992z%22/%3E%3Cpath%20d%3D%22m80.9773%2085.9957c2.1011-1.701%203.9417-3.7111%205.4528-5.9611%201.9111.0928%203.7735.3706%205.5699.8159v33.1495h-56v-33.1495c1.7964-.4453%203.6588-.7231%205.5699-.8159%201.5111%202.25%203.3517%204.2601%205.4528%205.9611%202.4698%206.9934%209.1384%2012.0043%2016.9773%2012.0043s14.5075-5.0109%2016.9773-12.0043z%22/%3E%3Cpath%20d%3D%22m64%2092c-3.345%200-6.5479-.6083-9.5041-1.7202%202.4963%202.3091%205.8354%203.7202%209.5041%203.7202s7.0078-1.4111%209.5041-3.7202c-2.9562%201.1119-6.1591%201.7202-9.5041%201.7202z%22/%3E%3Cpath%20d%3D%22m112.381%20114h-16.381v-31.8411c1.3908.5705%202.7274%201.2461%204%202.0167%208.392%205.0815%2014%2014.298%2014%2024.8244v3.381c0%20.877-.742%201.619-1.619%201.619z%22/%3E%3Cpath%20d%3D%22m32%20114h-16.381c-.8941%200-1.619-.725-1.619-1.619v-3.381c0-10.4828%205.562-19.6665%2013.8959-24.761l.1041-.0633c1.2726-.7706%202.6092-1.4461%204-2.0167z%22/%3E%3C/g%3E%3C/svg%3E') no-repeat center center;
+    background-size: contain;
+}
+
+
+``
+/*Модальное окно*/
+/* Стили для профиля и иконки */
+.navbar-profile {
+    position: relative; /* Для позиционирования выпадающего окна относительно иконки */
+}
+
+.profile-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Стили для выпадающего окна */
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.profile-dropdown-content {
+    padding: 10px;
+}
+
+    .profile-dropdown-content p {
+        margin: 5px 0;
+    }
+
+#icon-button {
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.Logout-button {
+    font-size: 16px;
+    background-color: #0E2559;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 400;
+    width: 100%;
+    align-items: center;
+}
+
+
+
 
 
 /*Анимация*/
 
-.nav-item {
+/*.nav-item {
     position: relative;
     height: 54px;
     font-size: 22px;
@@ -144,7 +378,7 @@ body {
 
 .nav-text {
     position: relative;
-    z-index: 1; /* Текст выше подсветки */
+    z-index: 1; 
     display: flex;
     align-items: center;
 }
@@ -152,36 +386,36 @@ body {
 .nav-link {
     display: flex;
     align-items: center;
-    color: black; /* Цвет текста по умолчанию */
+    color: black; 
     text-decoration: none;
     transition: color 0.3s;
     position: relative;
 }
 
 .nav-item:hover .nav-text {
-    color: #0ABAB5; /* Зеленый цвет текста при наведении */
+    color: #0ABAB5; 
 }
 
 .nav-item:hover #nav-content-highlight {
-    top: 8px; /* Подсветка появляется чуть ниже */
-    opacity: 1; /* Подсветка появляется */
-    left: -10px; /* Подсветка выдвигается влево */
-    width: calc(100% + 30px); /* Увеличение ширины подсветки */
+    top: 8px; 
+    opacity: 1; 
+    left: -10px; 
+    width: calc(100% + 30px);
 }
 
 .nav-item #nav-content-highlight {
     position: absolute;
-    left: -10px; /* Смещаем влево на 10px */
-    top: 10px; /* Подсветка появляется чуть ниже */
-    width: calc(100% + 30px); /* Увеличиваем ширину подсветки */
-    height: calc(70px - 20px); /* Уменьшаем высоту подсветки */
-    background: #fff; /* Белый фон подсветки */
-    border-radius: 30px 0 0 30px; /* Закругление только с левой стороны */
-    transition: top 0.4s ease-in-out, opacity 0.3s ease-out, left 0.4s ease-in-out, width 0.4s ease-in-out; /* Плавные переходы */
-    opacity: 0; /* Элемент скрыт по умолчанию */
-    pointer-events: none; /* Подсветка не мешает кликам по ссылке */
-    z-index: 0; /* Подсветка должна быть под текстом */
-}
+    left: -10px; 
+    top: 10px; 
+    width: calc(100% + 30px); 
+    height: calc(70px - 20px); 
+    background: #fff; 
+    border-radius: 30px 0 0 30px; 
+    transition: top 0.4s ease-in-out, opacity 0.3s ease-out, left 0.4s ease-in-out, width 0.4s ease-in-out;*/ /* Плавные переходы */
+    /*opacity: 0; 
+    pointer-events: none;
+    z-index: 0;
+}*/
 
 
 

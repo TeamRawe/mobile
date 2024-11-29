@@ -1,4 +1,5 @@
 using Hack.Web.Components;
+using Microsoft.JSInterop;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,15 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://your-backend-url/") });
+builder.Services.AddScoped<StateContainer>();
+
+
+// Register the JavaScript interaction service (AuthService)
 
 var app = builder.Build();
 
-
-
 app.UseHttpsRedirection();
-
-app.UseStaticFiles();
+app.UseStaticFiles(); // Serve static files (ensure JavaScript files are in wwwroot)
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()

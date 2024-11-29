@@ -1,0 +1,23 @@
+.contractor-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.contractor-card {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .contractor-card h5 {
+        margin-top: 0;
+        font-size: 1.2rem;
+    }
+
+    .contractor-card p {
+        margin: 0.3rem 0;
+    }

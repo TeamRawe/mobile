@@ -1,0 +1,198 @@
+﻿@page "/projects"
+
+@layout MainLayout
+
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<PageTitle>Проекты</PageTitle>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+<h2 class="name">Мои проекты</h2>
+
+@if (projects == null)
+{
+    <p>Загрузка данных...</p>
+}
+else
+{
+    <table class="table custom-table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Заказчик</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Прогресс</th>
+                <th>Статус</th>
+                <th>Плановая стоимость</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in projects)
+            {
+                <tr>
+                    <td>
+                        @if (project.HasStages)
+                        {
+                            <a href="/projects/@Uri.EscapeDataString(project.Title)/Stages?projectId=@project.Id">
+                                @project.Title
+                            </a>
+                        }
+                        else
+                        {
+                            @project.Title
+                        }
+                    </td>
+                    <td>@(project.CustomerName ?? "Загрузка...")</td>
+                    <td>@(DateTime.TryParse(project.StartDate, out var startDate) ? startDate.ToString("dd.MM.yyyy") : "Неверная дата")</td>
+                    <td>@(DateTime.TryParse(project.EndDate, out var endDate) ? endDate.ToString("dd.MM.yyyy") : "Неверная дата")</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: @(project.Progress)%"></div>
+                        </div>
+                        <span>@project.Progress %</span>
+                    </td>
+                    <td>@project.Status</td>
+                    <td>@project.PlannedCost</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Project>? projects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Загрузка данных о проектах
+            var rawProjects = await JSRuntime.InvokeAsync<List<RawProject>>("apiHandler.fetchProjects");
+
+            // Преобразование полученных данных
+            projects = rawProjects.Select(p => new Project
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    StartDate = p.Start_Date,  // Оставляем как строку
+                    EndDate = p.End_Date,      // Оставляем как строку
+                    PlannedCost = FormatCost(p.Planned_Cost), // Форматируем стоимость
+                    CustomerId = p.Customer,  // Используем строковый ID заказчика
+                    Progress = p.Progress,
+                    Status = p.Status
+                }).ToList();
+
+            // Загрузка названий заказчиков
+            foreach (var project in projects)
+            {
+                project.CustomerName = await LoadCustomerNameAsync(project.CustomerId);
+
+                // Проверка, есть ли у проекта этапы
+                project.HasStages = await HasStagesAsync(project.Id);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Ошибка загрузки данных: " + ex.Message);
+        }
+    }
+
+    private async Task<string> LoadCustomerNameAsync(string customerId)
+    {
+        try
+        {
+            // Получение названия заказчика по ID
+            var customerName = await JSRuntime.InvokeAsync<string>("apiHandler.getCustomerName", customerId);
+            return customerName;
+        }
+        catch
+        {
+            return "Ошибка загрузки";
+        }
+    }
+
+    private string FormatCost(string cost)
+    {
+        try
+        {
+            // Убираем лишние пробелы и пробуем конвертировать строку в число
+            var costValue = decimal.Parse(cost, System.Globalization.CultureInfo.InvariantCulture);
+
+            // Форматируем как "2.234.900,00 руб." (с использованием запятой для десятичных знаков)
+            return costValue.ToString("#,0.00", System.Globalization.CultureInfo.GetCultureInfo("ru-RU")) + " руб.";
+        }
+        catch
+        {
+            return "Ошибка формата стоимости"; // Возвращаем ошибку, если не удалось распарсить
+        }
+    }
+
+    private async Task<bool> HasStagesAsync(string projectId)
+    {
+        try
+        {
+            // Важно: Передаем ID проекта, получая ответ из JavaScript
+            var stages = await JSRuntime.InvokeAsync<List<Stage>>("apiHandler.fetchStages", projectId);
+
+            // Если этапы найдены, возвращаем true
+            if (stages != null && stages.Any())
+            {
+                Console.WriteLine($"Этапы найдены для проекта {projectId}");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"Этапы не найдены для проекта {projectId}");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка проверки этапов для проекта {projectId}: {ex.Message}");
+            return false;
+        }
+    }
+
+
+    // Классы RawProject и Stage для представления данных
+    public class RawProject
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Start_Date { get; set; }
+        public string End_Date { get; set; }
+        public string Planned_Cost { get; set; }
+        public string Customer { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class Project
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string StartDate { get; set; }  // Строка для даты с подчеркиванием
+        public string EndDate { get; set; }    // Строка для даты с подчеркиванием
+        public string PlannedCost { get; set; } // Форматированная строка для стоимости
+        public string CustomerId { get; set; }
+        public string? CustomerName { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
+
+        // Новое свойство для определения наличия этапов
+        public bool HasStages { get; set; }
+    }
+
+    public class Stage
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
+}

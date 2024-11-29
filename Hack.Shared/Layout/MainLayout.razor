@@ -1,17 +1,29 @@
 ﻿@inherits LayoutComponentBase
 
-
 <div class="page">
+    <div class="content-wrapper">
         <NavMenu />
-
-    <main>
+    <div class="main-page">
+        <MainHeader />
+        <main>
+            <article class="content">
+                @Body
+            </article>
+        </main>
+    </div>
+    </div>
+    <footer>
+        <span class="company-name">ИСВС 2024</span>
+        <span class="right-inf">
+            <NavLink class="nav-link" href="help" Match="NavLinkMatch.All">
+                <span class="footer-right-inf">Помощь</span>
+            </NavLink>
+        </span>
         
-        <article class="content">
-            @Body
-        </article>
-    </main>
-    
+    </footer>
 </div>
+
+
 
 
 @*<div id="blazor-error-ui" data-nosnippet>
@@ -21,3 +33,8 @@
 </div>
 *@
 
+
+@code {
+    
+
+}

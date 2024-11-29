@@ -1,6 +1,43 @@
-﻿<Router AppAssembly="typeof(Layout.MainLayout).Assembly">
+﻿@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<Router AppAssembly="typeof(Layout.MainLayout).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <h3>Page not found</h3>
+    </NotFound>
 </Router>
+
+@code {
+    private bool _isRedirected = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_isRedirected)
+        {
+            // Получаем текущий URL
+            var currentUri = Navigation.Uri;
+
+            // Проверяем, нужно ли выполнять редирект
+            if (!currentUri.EndsWith("/") && !currentUri.Contains("/auth"))
+            {
+                var isAuthenticated = await JSRuntime.InvokeAsync<bool>("apiHandler.isAuthenticated");
+
+                if (!isAuthenticated)
+                {
+                    _isRedirected = true; // Устанавливаем флаг, чтобы предотвратить повторный редирект
+                    Navigation.NavigateTo("/auth", true);
+                }
+            }
+        }
+    }
+
+
+
+
+
+}

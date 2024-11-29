@@ -1,0 +1,66 @@
+@page "/customers"
+@inject IJSRuntime JSRuntime
+<PageTitle>Госкомпании</PageTitle>
+
+<h3>Госкомпании</h3>
+
+<div>
+    <button @onclick="SearchByOGRN" class="btn btn-primary" style="float: right;">
+        Поиск по реестру
+    </button>
+</div>
+
+<div class="customer-cards-container">
+    @if (customers == null)
+    {
+        <p>Загрузка данных...</p>
+    }
+    else
+    {
+        @foreach (var customer in customers)
+        {
+            <div class="customer-card">
+                <h5>@customer.Title</h5>
+                <p>ИНН: @customer.INN</p>
+                <p>ОГРН: @customer.OGRN</p>
+                <p>Телефон: @customer.Phone</p>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<Customer> customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCustomerDataFromJS();
+    }
+
+    private async Task LoadCustomerDataFromJS()
+    {
+        try
+        {
+            var result = await JSRuntime.InvokeAsync<List<Customer>>("apiHandler.getCustomerData");
+            customers = result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Ошибка загрузки данных через JS: " + ex.Message);
+            customers = new List<Customer>();
+        }
+    }
+
+    private void SearchByOGRN()
+    {
+        Console.WriteLine("Поиск по ОГРН вызван."); // Для дальнейшей реализации
+    }
+
+    public class Customer
+    {
+        public string Title { get; set; }
+        public string INN { get; set; }
+        public string OGRN { get; set; }
+        public string Phone { get; set; }
+    }
+}
