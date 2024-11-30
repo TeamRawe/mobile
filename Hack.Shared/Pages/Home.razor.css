@@ -1,3 +1,7 @@
+* {
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
 .main-container {
     display: flex;
     flex-direction: column;
@@ -12,6 +16,9 @@
     font-weight: bold;
     margin-bottom: 40px;
     text-align: center;
+    background: linear-gradient(90deg, #0E2559 0%, #0C4D66 50.4%, #0A7774 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .patch-notes {

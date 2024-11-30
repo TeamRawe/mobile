@@ -28,6 +28,12 @@ html {
     margin-bottom: 20px; /* Отступ снизу от текста */
 }
 
+@media (max-width: 768px) {
+    .title {
+        font-size: 6rem;
+    }
+}
+
 
 .login-button {
     padding: 10px 20px;

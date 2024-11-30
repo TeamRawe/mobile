@@ -18,13 +18,14 @@
 main {
     display: flex;
     /* Используем процентное значение, чтобы main был адаптивным */
+    margin-top: 30px;
     margin-left: -59px;
     z-index: 2;
     margin-right: 25px;
     width: 100%; /* Убираем фиксированную ширину и делаем её адаптивной */ /* Ограничиваем максимальную ширину */
     background-color: #E5EEF6;
     flex: 1;
-    border-radius: 0 30px 30px 30px;
+    border-radius: 30px 30px 30px 30px;
     box-sizing: border-box;
     flex-direction: column;
 }
@@ -47,6 +48,10 @@ main {
         margin-top: 80px;
         width: 100%; /* Задаем полную ширину */
         border-radius: 15px; /* Уменьшаем скругление для мобильных устройств */
+    }
+    .right-inf {
+        margin-left: auto;
+        margin-right: 5px !important;
     }
 }
 
@@ -75,6 +80,8 @@ footer {
     box-sizing: border-box;
     position: relative;
 }
+
+
 
 .company-name {
     position: absolute; /* Для точного центрирования */

@@ -46,7 +46,57 @@
         </div>
     </header>
 
+<header class="menu-phone">
+    <!-- Mobile Navbar Toggle Button -->
+    <button class="mobile-nav-toggle" @onclick="ToggleMobileNav">
+        ☰
+    </button>
 
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar @mobileNavClass">
+       
+        <nav class="nav-container">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="projects" Match="NavLinkMatch.All" @onclick="CloseMobileNav">
+                    <span class="nav-text">Проекты</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="documents" @onclick="CloseMobileNav">
+                    <span class="nav-text">Договоры</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="weather" @onclick="CloseMobileNav">
+                    <span class="nav-text">Отчеты</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="diagram" @onclick="CloseMobileNav">
+                    <span class="nav-text">Диаграммы</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="customers" @onclick="CloseMobileNav">
+                    <span class="nav-text">Заказчики</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="contractors" @onclick="CloseMobileNav">
+                    <span class="nav-text">Подрядчики</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="help" @onclick="CloseMobileNav">
+                    <span class="nav-text">Помощь</span>
+                </NavLink>
+            </div>
+        </nav>
+        <button class="close-btn" @onclick="ToggleMobileNav">
+            ×
+        </button>
+    </div>
+</header>
 
 <div class="navmenu">
 
@@ -119,6 +169,7 @@
 
 @code {
     private bool showDropdown = false;
+    private string mobileNavClass = "";
     private string FirstName = "";
     private string LastName = "";
     private string MiddleName = "";
@@ -126,6 +177,15 @@
     private string Email = "Email";
 
     private string UserId;
+
+    private void ToggleMobileNav()
+    {
+        mobileNavClass = mobileNavClass == "" ? "open" : ""; // Переключение класса для отображения меню
+    }
+    private void CloseMobileNav()
+    {
+        mobileNavClass = ""; // Закрытие меню при клике на ссылку
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
